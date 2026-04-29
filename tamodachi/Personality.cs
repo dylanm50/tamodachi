@@ -15,7 +15,7 @@ namespace tamodachi
         AttributeRange t;
         AttributeRange n;
 
-        public List<string> phrases { get; }
+        public List<phrase> phrases { get; }
 
         public Personality
         (
@@ -27,7 +27,7 @@ namespace tamodachi
             int[] t,
             int[] n,
 
-            string[] phrases
+            phrase[] phrases
         )
         {
             this.name = name;

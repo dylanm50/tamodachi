@@ -113,11 +113,29 @@ namespace tamodachi
             return false;
         }
         
-        public string Talk()
+        string Say(string message)
         {
-            int i = new Random().Next(Personality.phrases.Count());
+            return $"{this.name}: \"{message}\"";
+        }
+
+        public string Talk(string backupMessage)
+        {
+            phrase[] filteredPhrases = 
+                Personality.phrases.FindAll
+                (
+                    n => (n.timing[1] >= Program.time) && (n.timing[0] <= Program.time)
+                ).ToArray();
+
+            int length = filteredPhrases.Length;
+
+            if (length == 0)
+            {
+                return Say(backupMessage);
+            }
+
+            int i = new Random().Next(length);
             
-            return $"{name}: \"{Personality.phrases[i]}\"";
+            return Say(filteredPhrases[i].ToString());
         }
 
         public string MatchToString(Tamodachi person)
