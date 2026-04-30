@@ -7,7 +7,7 @@ namespace tamodachi
 {
     public class Personality
     {
-        public PersonalityNames name { get; }
+        public Global.PersonalityNames name { get; }
 
         AttributeRange m;
         AttributeRange s;
@@ -19,7 +19,7 @@ namespace tamodachi
 
         public Personality
         (
-            PersonalityNames name,
+            Global.PersonalityNames name,
 
             int[] m,
             int[] s,

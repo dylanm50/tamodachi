@@ -24,7 +24,7 @@ namespace tamodachi
         (
             string name,
             int m, int s, int e, int t, int n,
-            Program.Egender gender, Program.Egender[] fancies
+            Global.Egender gender, Global.Egender[] fancies
         )
         {
             this.name = name;
@@ -37,7 +37,7 @@ namespace tamodachi
 
             bool check = true;
 
-            foreach (Personality p in Program.Personalities)
+            foreach (Personality p in Global.Personalities)
             {
                 if (p.Match(Movement, Speech, Energy, Thinking, Normal))
                 {
@@ -59,7 +59,7 @@ namespace tamodachi
 
             this.fancies = new List<Gender>();
 
-            foreach (Egender g in fancies)
+            foreach (Global.Egender g in fancies)
             {   
                 this.fancies.Add(new Gender(g));
             }
@@ -98,9 +98,9 @@ namespace tamodachi
         {
             if (MatchG(person))
             {
-                PersonalityNames contempt = Program.PersonalityNames.contempt;
-                PersonalityNames a = Personality.name;
-                PersonalityNames b = person.Personality.name;
+                Global.PersonalityNames contempt = Global.PersonalityNames.contempt;
+                Global.PersonalityNames a = Personality.name;
+                Global.PersonalityNames b = person.Personality.name;
 
                 if (a == contempt || b == contempt)
                 {
@@ -118,12 +118,12 @@ namespace tamodachi
             return $"{this.name}: \"{message}\"";
         }
 
-        public string Talk(string backupMessage)
+        public string Talk(string backupMessage, System.TimeOnly time)
         {
             phrase[] filteredPhrases = 
                 Personality.phrases.FindAll
                 (
-                    n => (n.timing[1] >= Program.time) && (n.timing[0] <= Program.time)
+                    n => (n.timing[1] >= time) && (n.timing[0] <= time)
                 ).ToArray();
 
             int length = filteredPhrases.Length;

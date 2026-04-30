@@ -6,17 +6,17 @@ namespace tamodachi
 {
     public class Gender
     {
-        public Program.Egender gender { get; }
+        public Global.Egender gender { get; }
 
 
-        public Gender(Program.Egender gender)
+        public Gender(Global.Egender gender)
         {
             this.gender = gender;
         }
 
         public override string ToString()
         {
-            if (gender == Program.Egender.nonBinary)
+            if (gender == Global.Egender.nonBinary)
             {
                 return "non binary";
             }
