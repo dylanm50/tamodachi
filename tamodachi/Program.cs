@@ -6,6 +6,8 @@
         public System.TimeOnly time { get; } = TimeOnly.FromDateTime(DateTime.Now);
 
         public List<Tamodachi> tamodachis = new List<Tamodachi>();
+
+        public List<string> objects = new List<string>();
         
         public static string mTime(System.TimeOnly time)
         {
@@ -17,7 +19,7 @@
             tamodachis.Add(
             new Tamodachi
             (
-                "Person A",
+                "Happy",
                 -4, -4, 1, -4, 1,
                 Global.Egender.male,
                 new Global.Egender[]
@@ -29,8 +31,8 @@
             tamodachis.Add(
             new Tamodachi
             (
-                "Person B",
-                -4, -4, 1, -4, 1,
+                "Sad",
+                -4, -4, -4, 1, -4,
                 Global.Egender.female,
                 new Global.Egender[]
                 {
@@ -38,6 +40,21 @@
                     Global.Egender.nonBinary, Global.Egender.male
                 }
             ));
+
+            tamodachis.Add(
+            new Tamodachi
+            (
+                "Indiferent",
+                4, 4, 4, 4, 4,
+                Global.Egender.female,
+                new Global.Egender[]
+                {
+                    Global.Egender.female,
+                    Global.Egender.nonBinary, Global.Egender.male
+                }
+            ));
+
+            objects = new List<string>(){"ball", "gameboy", "chocolate"};
         }
     }
 }

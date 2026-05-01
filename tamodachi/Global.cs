@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Timers;
 
@@ -42,17 +43,17 @@ namespace tamodachi
                     new phrase
                     (
                         "I love everything",
-                        new System.TimeOnly[] { new System.TimeOnly(19, 0), new System.TimeOnly(23, 59) }
+                        new System.TimeOnly[] { new System.TimeOnly(0, 0), new System.TimeOnly(23, 59) }
                     ),
                     new phrase
                     (
                         "I have so much energy",
-                        new System.TimeOnly[] { new System.TimeOnly(19, 0), new System.TimeOnly(23, 59) }
+                        new System.TimeOnly[] { new System.TimeOnly(0, 0), new System.TimeOnly(23, 59) }
                     ),
                     new phrase
                     (
                         "I look forward to tomorrow",
-                        new System.TimeOnly[] { new System.TimeOnly(19, 0), new System.TimeOnly(23, 59) }
+                        new System.TimeOnly[] { new System.TimeOnly(0, 0), new System.TimeOnly(23, 59) }
                     )
                 }
             ),
@@ -120,25 +121,34 @@ namespace tamodachi
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("Loading ...");
+            
+            Console.WriteLine("Running a C# tamodachi game container.");
+            Console.WriteLine("\tInstance 1:");
+
+            Console.WriteLine("\t\tLoading ...");
 
             Program p = new Program();
 
             p.Init();
 
-            Tamodachi personA = p.tamodachis[0];
-            Tamodachi personB = p.tamodachis[1];
+            Tamodachi happy    = p.tamodachis[0];
+            Tamodachi sad      = p.tamodachis[1];
+            Tamodachi contempt = p.tamodachis[2];
 
-            Console.WriteLine("Finished loading!");
+            Console.WriteLine("\t\tFinished loading!");
 
-            Console.WriteLine($"The current time is {p.time}");
+            Console.WriteLine($"\t\tThe current time is {p.time}");
 
-            Console.WriteLine(personA);
-            Console.WriteLine(personB);
-            Console.WriteLine(personA.MatchToString(personB));
-            Console.WriteLine(personA.Talk("ummm idk what to say XD", p.time));
-            Console.WriteLine(personB.Talk("imm be a STAR", p.time));
-            
+            Console.WriteLine($"\t\t{happy}");
+            Console.WriteLine($"\t\t{sad}");
+            Console.WriteLine($"\t\t{happy.MatchToString(sad)}");
+            Console.WriteLine($"\t\t{happy.Talk("ummm idk what to say XD", p.time)}");
+            Console.WriteLine($"\t\t{happy.Talk("imm be a STAR", p.time)}");
+
+            string o = p.objects[new Random().Next(p.objects.Count() - 1)];
+
+            Console.WriteLine(contempt.Conversation(o, sad, 2));
+
             /*
             int l = 100000;
 
