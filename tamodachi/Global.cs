@@ -119,20 +119,17 @@ namespace tamodachi
             )
         };
 
-        public static void Main(string[] args)
+        static void Testing()
         {
-            
             Console.WriteLine("Running a C# tamodachi game container.");
             Console.WriteLine("\tInstance 1:");
 
             Console.WriteLine("\t\tLoading ...");
 
-            Program p = new Program();
+            Program p = new Program(true);
 
-            p.Init();
-
-            Tamodachi happy    = p.tamodachis[0];
-            Tamodachi sad      = p.tamodachis[1];
+            Tamodachi happy = p.tamodachis[0];
+            Tamodachi sad = p.tamodachis[1];
             Tamodachi contempt = p.tamodachis[2];
 
             Console.WriteLine("\t\tFinished loading!");
@@ -141,13 +138,14 @@ namespace tamodachi
 
             Console.WriteLine($"\t\t{happy}");
             Console.WriteLine($"\t\t{sad}");
+            Console.WriteLine($"\t\t{contempt}");
             Console.WriteLine($"\t\t{happy.MatchToString(sad)}");
             Console.WriteLine($"\t\t{happy.Talk("ummm idk what to say XD", p.time)}");
             Console.WriteLine($"\t\t{happy.Talk("imm be a STAR", p.time)}");
 
             string o = p.objects[new Random().Next(p.objects.Count() - 1)];
 
-            Console.WriteLine(contempt.Conversation(o, sad, 2));
+            Console.WriteLine(happy.Conversation(o, sad, 2));
 
             /*
             int l = 100000;
@@ -159,11 +157,123 @@ namespace tamodachi
             for (int i = 0; i < l; i ++)
             {
                 programs[i] = new Program();
-                programs[i].Init();
             }
 
             Console.WriteLine("Finished!");
             */
+        }
+
+        static int StringToInt(string s)
+        {
+            int result = (int) s[0] - 48;
+
+            if (result <0)
+            {
+                result--;
+            }
+
+            return result;
+        }
+
+        public static void Main(string[] args)
+        {
+            string name;
+            Program p;
+            
+            while (true)
+            {
+
+                Console.WriteLine("Creating a Guy!");
+
+                string acceptableValues = "(non 0 values within the range of -4-4 are accepted)";
+
+                Console.WriteLine($"How much do they move? {acceptableValues}");
+
+                int m = StringToInt(Console.ReadLine());
+
+                Console.WriteLine($"How much do they talk? {acceptableValues}");
+
+                int s = StringToInt(Console.ReadLine());
+
+                Console.WriteLine($"How much energy do they have? {acceptableValues}");
+
+                int e = StringToInt(Console.ReadLine());
+
+                Console.WriteLine($"How much do they think? {acceptableValues}");
+
+                int t = StringToInt(Console.ReadLine());
+
+                Console.WriteLine($"How quirky are they? {acceptableValues}");
+
+                int n = StringToInt(Console.ReadLine());
+
+                Console.WriteLine("What is their name?");
+
+                name = Console.ReadLine();
+
+                Console.WriteLine("What is their gender (1 for male, 2 for female, 3 for non binary)");
+
+                string gender = Console.ReadLine();
+                Egender egender = new Egender();
+
+                switch (gender)
+                {
+                    case "1":
+                        egender = Egender.male;
+
+                        break;
+                    case "2":
+                        egender = Egender.female;
+
+                        break;
+                    default:
+                        egender = Egender.nonBinary;
+
+                        break;
+                }
+
+                List<Egender> likes = new List<Egender>();
+
+                Console.WriteLine($"Type \"y\" if {name} likes men.");
+
+                if (Console.ReadLine() == "y")
+                {
+                    likes.Add(Egender.male);
+                }
+
+                Console.WriteLine($"Type \"y\" if {name} likes women.");
+
+                if (Console.ReadLine() == "y")
+                {
+                    likes.Add(Egender.female);
+                }
+
+                Console.WriteLine($"Type \"y\" if {name} likes non binaries.");
+
+                if (Console.ReadLine() == "y")
+                {
+                    likes.Add(Egender.nonBinary);
+                }
+
+                Console.WriteLine($"Attempting to create {name}!");
+
+                p = new Program(false);
+
+                try
+                {
+                    p.tamodachis.Add(new Tamodachi(name, m, s, e, t, n, egender, likes.ToArray()));
+
+                    break;
+                }
+                catch
+                {
+                    Console.WriteLine("Creation unsucessful");
+                }
+            }
+
+            Console.WriteLine($"Created {name} successfully");
+
+            Console.WriteLine(p.tamodachis[0]);
         }
     }
 }

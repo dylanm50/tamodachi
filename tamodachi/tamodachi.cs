@@ -157,6 +157,11 @@ namespace tamodachi
         // Have a chat (eww it looks like javascript)
         public string Conversation(string o, Tamodachi person, int level)
         {
+            if(level <0)
+            {
+                throw new ArgumentOutOfRangeException(level.ToString());
+            }
+            
             string indent = "";
 
             for (int i = 0; i < level; i ++)

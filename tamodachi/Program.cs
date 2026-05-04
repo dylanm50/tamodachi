@@ -14,47 +14,51 @@
             return time.ToString("HH:mm");
         }
 
-        public void Init()
+        public Program(bool testing)
         {
-            tamodachis.Add(
-            new Tamodachi
-            (
-                "Happy",
-                -4, -4, 1, -4, 1,
-                Global.Egender.male,
-                new Global.Egender[]
-                {
+            if (testing)
+            {
+
+                tamodachis.Add(
+                new Tamodachi
+                (
+                    "Happy",
+                    -4, -4, 1, -4, 1,
+                    Global.Egender.male,
+                    new Global.Egender[]
+                    {
                     Global.Egender.female, Global.Egender.nonBinary
-                }
-            ));
+                    }
+                ));
 
-            tamodachis.Add(
-            new Tamodachi
-            (
-                "Sad",
-                -4, -4, -4, 1, -4,
-                Global.Egender.female,
-                new Global.Egender[]
-                {
+                tamodachis.Add(
+                new Tamodachi
+                (
+                    "Sad",
+                    -4, -4, -4, 1, -4,
+                    Global.Egender.female,
+                    new Global.Egender[]
+                    {
                     Global.Egender.female,
                     Global.Egender.nonBinary, Global.Egender.male
-                }
-            ));
+                    }
+                ));
 
-            tamodachis.Add(
-            new Tamodachi
-            (
-                "Indiferent",
-                4, 4, 4, 4, 4,
-                Global.Egender.female,
-                new Global.Egender[]
-                {
+                tamodachis.Add(
+                new Tamodachi
+                (
+                    "Indiferent",
+                    4, 4, 4, 4, 4,
+                    Global.Egender.female,
+                    new Global.Egender[]
+                    {
                     Global.Egender.female,
                     Global.Egender.nonBinary, Global.Egender.male
-                }
-            ));
+                    }
+                ));
 
-            objects = new List<string>(){"ball", "gameboy", "chocolate"};
+                objects = new List<string>() { "ball", "gameboy", "chocolate" };
+            }
         }
     }
 }
