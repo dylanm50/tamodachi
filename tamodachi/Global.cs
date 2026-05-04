@@ -163,16 +163,19 @@ namespace tamodachi
             */
         }
 
+        static int CharToNum(char c)
+        {
+            return (int) c - 48;
+        }
+
         static int StringToInt(string s)
         {
-            int result = (int) s[0] - 48;
-
-            if (result <0)
+            if(s.Length == 2)
             {
-                result--;
+                return CharToNum(s[1]) * - 1;
             }
 
-            return result;
+            return CharToNum(s[0]);
         }
 
         public static void Main(string[] args)
