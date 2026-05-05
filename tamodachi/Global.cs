@@ -174,14 +174,17 @@ namespace tamodachi
             {
                 return CharToNum(s[1]) * - 1;
             }
+            else if (s.Length == 1)
+            {
+                return CharToNum(s[0]);
+            }
 
-            return CharToNum(s[0]);
+            return 0;
         }
 
-        public static void Main(string[] args)
+        static bool Create(ref Program p, bool manditory)
         {
             string name;
-            Program p;
             
             while (true)
             {
@@ -260,23 +263,56 @@ namespace tamodachi
 
                 Console.WriteLine($"Attempting to create {name}!");
 
-                p = new Program(false);
-
                 try
                 {
                     p.tamodachis.Add(new Tamodachi(name, m, s, e, t, n, egender, likes.ToArray()));
 
-                    break;
+                    return true;
                 }
                 catch
                 {
                     Console.WriteLine("Creation unsucessful");
+
+                    if (!manditory)
+                    {
+                        Console.WriteLine("Press \"y\" to abandon");
+
+                        if (Console.ReadLine() == "y")
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
+        }
+        
+        public static void Main(string[] args)
+        {
+            Program p = new Program(false);
 
-            Console.WriteLine($"Created {name} successfully");
+            Create(ref p, true);
 
             Console.WriteLine(p.tamodachis[0]);
+            Console.WriteLine(p.tamodachis[0].Say("Im kind of bored..."));
+            Console.WriteLine(p.tamodachis[0].Say("Lets invite someone new to the island!"));
+
+            Create(ref p, true);
+
+            Console.WriteLine(p.tamodachis.Count());
+
+            Console.WriteLine(p.tamodachis[1].Say("Im so happy to be here!"));
+
+            Console.WriteLine(p.tamodachis[1].Say("What is your favourite object?"));
+
+            string obj = Console.ReadLine();
+
+            p.objects.Add(obj);
+
+            // Start a conversation!
+
+            string o = p.objects[new Random().Next(p.objects.Count() - 1)];
+
+            Console.WriteLine(p.tamodachis[0].Conversation(o, p.tamodachis[1], 2));
         }
     }
 }

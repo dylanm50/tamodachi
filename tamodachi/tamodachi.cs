@@ -128,7 +128,7 @@ namespace tamodachi
         }
         
         // Say the thing
-        string Say(string message)
+        public string Say(string message)
         {
             return $"{this.name}: \"{message}\"";
         }
