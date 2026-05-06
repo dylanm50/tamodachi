@@ -25,6 +25,13 @@ namespace tamodachi
             nonBinary
         };
 
+        public enum FoodNames
+        {
+            pizza,
+            sushi,
+            burger
+        };
+
         // I LOVE ARRAYS IN C# (JAVA SUCKS ASS)
         public static Personality[] Personalities =
         {
@@ -119,6 +126,13 @@ namespace tamodachi
             )
         };
 
+        public static Food[] foods =
+{
+            new Food(FoodNames.pizza, 5.77, PersonalityNames.happy),
+            new Food(FoodNames.sushi, 10.00, PersonalityNames.sad),
+            new Food(FoodNames.burger, 7.05, PersonalityNames.contempt),
+        };
+
         static void Testing()
         {
             Console.WriteLine("Running a C# tamodachi game container.");
@@ -146,6 +160,25 @@ namespace tamodachi
             string o = p.objects[new Random().Next(p.objects.Count() - 1)];
 
             Console.WriteLine(happy.Conversation(o, sad, 2));
+
+            Food pizza = foods[0];
+            Food sushi = foods[1];
+            Food burger = foods[2];
+
+            Console.WriteLine($"{happy.Eat(pizza, 2)}");
+            Console.WriteLine($"{happy.Eat(pizza, 2)}");
+            Console.WriteLine($"{happy.Eat(sushi, 2)}");
+            Console.WriteLine($"{happy.Eat(burger, 2)}");
+
+            Console.WriteLine($"{sad.Eat(pizza, 2)}");
+            Console.WriteLine($"{sad.Eat(sushi, 2)}");
+            Console.WriteLine($"{sad.Eat(sushi, 2)}");
+            Console.WriteLine($"{sad.Eat(burger, 2)}");
+
+            Console.WriteLine($"{contempt.Eat(pizza, 2)}");
+            Console.WriteLine($"{contempt.Eat(sushi, 2)}");
+            Console.WriteLine($"{contempt.Eat(burger, 2)}");
+            Console.WriteLine($"{contempt.Eat(burger, 2)}");
 
             /*
             int l = 100000;
@@ -285,8 +318,8 @@ namespace tamodachi
                 }
             }
         }
-        
-        public static void Main(string[] args)
+
+        void Startup()
         {
             Program p = new Program(false);
 
@@ -298,8 +331,6 @@ namespace tamodachi
 
             Create(ref p, true);
 
-            Console.WriteLine(p.tamodachis.Count());
-
             Console.WriteLine(p.tamodachis[1].Say("Im so happy to be here!"));
 
             Console.WriteLine(p.tamodachis[1].Say("What is your favourite object?"));
@@ -308,11 +339,12 @@ namespace tamodachi
 
             p.objects.Add(obj);
 
-            // Start a conversation!
-
-            string o = p.objects[new Random().Next(p.objects.Count() - 1)];
-
-            Console.WriteLine(p.tamodachis[0].Conversation(o, p.tamodachis[1], 2));
+            Console.WriteLine(p.tamodachis[0].Conversation(obj, p.tamodachis[1], 1));
+        }
+        
+        public static void Main(string[] args)
+        {
+            Testing();
         }
     }
 }

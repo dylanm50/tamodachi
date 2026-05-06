@@ -8,7 +8,7 @@
         public List<Tamodachi> tamodachis = new List<Tamodachi>();
 
         public List<string> objects = new List<string>();
-        
+
         public static string mTime(System.TimeOnly time)
         {
             return time.ToString("HH:mm");

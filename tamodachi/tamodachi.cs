@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using System.Text;
 using static tamodachi.Program;
 
@@ -19,6 +20,8 @@ namespace tamodachi
         public List<Gender> fancies { get; }
 
         public Personality Personality { get; }
+
+        public List<FoodRelationship> foods;
 
         // This is who I am :)
         public Tamodachi
@@ -154,6 +157,23 @@ namespace tamodachi
             return Say(filteredPhrases[i].ToString());
         }
 
+        public string indent(int n)
+        {
+            if (n < 0)
+            {
+                throw new ArgumentException(n.ToString());
+            }
+
+            string s = "";
+
+            for (int i = 0; i < n; i++)
+            {
+                s += "\t";
+            }
+
+            return s;
+        }
+
         // Have a chat (eww it looks like javascript)
         public string Conversation(string o, Tamodachi person, int level)
         {
@@ -162,26 +182,82 @@ namespace tamodachi
                 throw new ArgumentOutOfRangeException(level.ToString());
             }
             
-            string indent = "";
+            string ind = indent(level);
 
-            for (int i = 0; i < level; i ++)
-            {
-                indent += "\t";
-            }
+            string s = $"{ind}Conversation between {this.name} and {person.name}\n";
 
-            string s = $"{indent}Conversation between {this.name} and {person.name}\n";
-
-            s += $"{indent}\t{Say($"Hello {person.name}, what do you think about {o}?")}";
+            s += $"{ind}\t{Say($"Hello {person.name}, what do you think about {o}?")}";
 
             if (Like(person))
             {
-                s += $"\n{indent}\t{person.Say($"Yo I love {o}")}";
+                s += $"\n{ind}\t{person.Say($"Yo I love {o}")}";
             }else
             {
-                s += $"\n{indent}\t{person.Say($"I hate {o}")}";
+                s += $"\n{ind}\t{person.Say($"I hate {o}")}";
             }
 
             return s;
+        }
+
+        public string Eat(Food food, int level)
+        {   
+            FoodRelationship relationship = null;
+
+            string ind = indent(level);
+
+            if (foods != null)
+            {
+                bool check = true;
+
+                foreach (FoodRelationship r in foods)
+                {
+                    if (r.food == food)
+                    {
+                        check = false;
+
+                        relationship = r;
+
+                        //Console.WriteLine("FOOD EXISTS");
+
+                        break;
+                    }
+                }
+
+                if (check)
+                {
+                    //Console.WriteLine("FOOD DOESNT EXIST");
+
+                    relationship = new FoodRelationship(food, this);
+
+                    foods.Add(relationship);
+                }
+            }else
+            {
+                //Console.WriteLine("FOODS IS NULL");
+
+                relationship = new FoodRelationship(food, this);
+
+                foods = new List<FoodRelationship> { relationship };
+            }
+
+            string start = $"{ind}{name} is eating {food}\n{ind}\t";
+
+            if (relationship.like < 5)
+            {
+                return $"{start}{name} didn't really like it";
+            }
+            else if (relationship.like < 6)
+            {
+                return $"{start}{name} thought it was alright";
+            }
+            else if (relationship.like < 10)
+            {
+                return $"{start}{name} really liked it";
+            }else
+            {
+                return $"{start}{name} REALLY liked it!!!";
+            }
+
         }
 
         public string MatchToString(Tamodachi person)
