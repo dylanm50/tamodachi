@@ -165,6 +165,7 @@ namespace tamodachi
             Food sushi = foods[1];
             Food burger = foods[2];
 
+            /*
             Console.WriteLine($"{happy.Eat(pizza, 2)}");
             Console.WriteLine($"{happy.Eat(pizza, 2)}");
             Console.WriteLine($"{happy.Eat(sushi, 2)}");
@@ -179,6 +180,11 @@ namespace tamodachi
             Console.WriteLine($"{contempt.Eat(sushi, 2)}");
             Console.WriteLine($"{contempt.Eat(burger, 2)}");
             Console.WriteLine($"{contempt.Eat(burger, 2)}");
+            */
+
+            p.money = 10.6753464;
+
+            Console.WriteLine($"\t\t{p.Money()}");
 
             /*
             int l = 100000;
@@ -318,8 +324,63 @@ namespace tamodachi
                 }
             }
         }
+        public static string indent(int n)
+        {
+            if (n < 0)
+            {
+                throw new ArgumentException(n.ToString());
+            }
 
-        void Startup()
+            string s = "";
+
+            for (int i = 0; i < n; i++)
+            {
+                s += "\t";
+            }
+
+            return s;
+        }
+
+        static Food Buy(Program p, Store s)
+        {
+            Console.WriteLine(s);
+
+            Console.WriteLine($"\tYou have {p.Money()}");
+            
+            string selection = "";
+
+            for(int i = 0; i < s.stock.Length; i ++)
+            {
+                selection += $"\tPress {i + 1} for {s.stock[i]} for {s.stock[i].price:C}";
+
+                if (i != s.stock.Length - 1)
+                {
+                    selection += "\n";
+                }
+            }
+
+            Console.WriteLine(selection);
+
+            int index = CharToNum(Console.ReadLine()[0]) - 1;
+
+            if (index > -1 && index < s.stock.Length)
+            {
+                String message = "";
+                
+                Food food = s.Buy(ref p.money, index, ref message);
+
+                Console.WriteLine($"\t{message}");
+                
+                return food;
+            }else
+            {
+                Console.WriteLine("Incorrect selection");
+                
+                return null;
+            }
+        }
+
+        static Program Startup()
         {
             Program p = new Program(false);
 
@@ -331,20 +392,55 @@ namespace tamodachi
 
             Create(ref p, true);
 
+            Console.WriteLine(p.tamodachis[1]);
             Console.WriteLine(p.tamodachis[1].Say("Im so happy to be here!"));
-
             Console.WriteLine(p.tamodachis[1].Say("What is your favourite object?"));
 
             string obj = Console.ReadLine();
 
             p.objects.Add(obj);
 
-            Console.WriteLine(p.tamodachis[0].Conversation(obj, p.tamodachis[1], 1));
+            Console.WriteLine(p.tamodachis[0].Conversation(obj, p.tamodachis[1], 0));
+
+            p.money = 100;
+
+            Console.WriteLine(p.Money());
+
+            return p;
         }
         
         public static void Main(string[] args)
         {
-            Testing();
+            Program p = Startup();
+
+            Console.WriteLine(p.tamodachis[0].Say("Lets go to the store!"));
+
+            Store s = new Store(foods);
+
+            Food food = null;
+
+            while (food == null)
+            {
+                food = Buy(p, s);
+            }
+
+            while(true)
+            {
+                Console.WriteLine("Choose someone to give the food to!");
+
+                Console.WriteLine($"Press 1 for {p.tamodachis[0].name}, Press 2 for {p.tamodachis[1].name}");
+
+                int i = CharToNum(Console.ReadLine()[0]) - 1;
+
+                if (i > -1 && i < 2)
+                {
+                    Console.WriteLine(p.tamodachis[i].Eat(food, 0));
+
+                    break;
+                }
+
+                Console.WriteLine("Incorrect selection!");
+            }
         }
     }
 }

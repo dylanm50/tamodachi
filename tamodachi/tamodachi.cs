@@ -157,22 +157,6 @@ namespace tamodachi
             return Say(filteredPhrases[i].ToString());
         }
 
-        public string indent(int n)
-        {
-            if (n < 0)
-            {
-                throw new ArgumentException(n.ToString());
-            }
-
-            string s = "";
-
-            for (int i = 0; i < n; i++)
-            {
-                s += "\t";
-            }
-
-            return s;
-        }
 
         // Have a chat (eww it looks like javascript)
         public string Conversation(string o, Tamodachi person, int level)
@@ -182,7 +166,7 @@ namespace tamodachi
                 throw new ArgumentOutOfRangeException(level.ToString());
             }
             
-            string ind = indent(level);
+            string ind = Global.indent(level);
 
             string s = $"{ind}Conversation between {this.name} and {person.name}\n";
 
@@ -203,7 +187,7 @@ namespace tamodachi
         {   
             FoodRelationship relationship = null;
 
-            string ind = indent(level);
+            string ind = Global.indent(level);
 
             if (foods != null)
             {

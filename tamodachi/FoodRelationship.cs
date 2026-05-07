@@ -6,8 +6,8 @@ namespace tamodachi
 {
     public class FoodRelationship
     {
-        public Food food;
-        public int like;
+        public Food food { get; }
+        public int like { get; }
 
         public FoodRelationship(Food food, Tamodachi person)
         {

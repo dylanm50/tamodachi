@@ -8,7 +8,7 @@ namespace tamodachi
     {
         Global.FoodNames name;
 
-        double price;
+        public double price { get; }
 
         public Global.PersonalityNames personality { get; }
 

@@ -9,9 +9,16 @@
 
         public List<string> objects = new List<string>();
 
+        public double money = 0;
+
         public static string mTime(System.TimeOnly time)
         {
             return time.ToString("HH:mm");
+        }
+
+        public string Money()
+        {
+            return $"You have {money:C}";
         }
 
         public Program(bool testing)
