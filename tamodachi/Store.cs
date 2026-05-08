@@ -28,7 +28,7 @@ namespace tamodachi
             {
                 wallet = newWallet;
 
-                message = $"You have bought {item} for {item.price}.\nYour new balance is {wallet}.";
+                message = $"You have bought {item} for {item.price:C}.\nYour new balance is {wallet:C}.";
 
                 return item;
             }

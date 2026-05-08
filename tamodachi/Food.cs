@@ -26,6 +26,11 @@ namespace tamodachi
 
         public override string ToString()
         {
+            if (name == Global.FoodNames.mcChicken)
+            {
+                return "Mc Chicken";
+            }
+
             return name.ToString();
         }
 

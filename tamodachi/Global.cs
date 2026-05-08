@@ -29,7 +29,8 @@ namespace tamodachi
         {
             pizza,
             sushi,
-            burger
+            burger,
+            mcChicken
         };
 
         // I LOVE ARRAYS IN C# (JAVA SUCKS ASS)
@@ -131,6 +132,7 @@ namespace tamodachi
             new Food(FoodNames.pizza, 5.77, PersonalityNames.happy),
             new Food(FoodNames.sushi, 10.00, PersonalityNames.sad),
             new Food(FoodNames.burger, 7.05, PersonalityNames.contempt),
+            new Food(FoodNames.mcChicken, 9.50, PersonalityNames.contempt),
         };
 
         static void Testing()
@@ -415,7 +417,7 @@ namespace tamodachi
 
             Console.WriteLine(p.tamodachis[0].Say("Lets go to the store!"));
 
-            Store s = new Store(foods);
+            Store s = new Store(new Food[] { foods[0], foods[1], foods[3] });
 
             Food food = null;
 
