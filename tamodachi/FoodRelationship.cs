@@ -32,7 +32,7 @@ namespace tamodachi
 
         public FoodRelationship(Global.FoodNames name, int like)
         {
-            Food food = Global.FoodNameToFood(name);
+            food = Global.FoodNameToFood(name);
             this.like = like;
         }
     }

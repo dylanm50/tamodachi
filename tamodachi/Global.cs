@@ -529,7 +529,7 @@ namespace tamodachi
 
             p.Load();
 
-            Console.WriteLine(p.tamodachis[0].foods[1].like);
+            Console.WriteLine(p.tamodachis[0].foods[1].food);
 
             //p.Save();
 

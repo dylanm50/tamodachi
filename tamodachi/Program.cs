@@ -62,7 +62,7 @@ namespace tamodachi
 
                     foreach (FoodRelationship f in t.foods)
                     {
-                        writer.WriteLine($"\t\t\t{f.food}");
+                        writer.WriteLine($"\t\t\t{Global.FoodNameToString(f.food.name)}");
                         writer.WriteLine($"\t\t\t\t{f.like}");
                     }
                 }
@@ -255,7 +255,7 @@ namespace tamodachi
                     new FoodRelationship[] 
                     { 
                         new FoodRelationship(Global.FoodNames.pizza, 10),
-                        new FoodRelationship(Global.FoodNames.sushi, 5),
+                        new FoodRelationship(Global.FoodNames.sushi, 5)
                     }
                 ));
 
