@@ -6,7 +6,7 @@ namespace tamodachi
 {
     public class Food
     {
-        Global.FoodNames name;
+        public Global.FoodNames name { get; }
 
         public double price { get; }
 
@@ -26,12 +26,7 @@ namespace tamodachi
 
         public override string ToString()
         {
-            if (name == Global.FoodNames.mcChicken)
-            {
-                return "Mc Chicken";
-            }
-
-            return name.ToString();
+            return Global.FoodNameToString(name);
         }
 
         public override bool Equals(object? obj)

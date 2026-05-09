@@ -25,6 +25,22 @@ namespace tamodachi
             nonBinary
         };
 
+        public static Egender StringToEgender(string s)
+        {
+            switch(s)
+            {
+                case "male":
+                    return Egender.male;
+                case "female":
+                    return Egender.female;
+                case "non binary":
+                    return Egender.nonBinary;
+                default:
+                    throw new ArgumentException(s);
+            }
+               
+        }
+
         public enum FoodNames
         {
             pizza,
@@ -32,6 +48,23 @@ namespace tamodachi
             burger,
             mcChicken
         };
+
+        public static FoodNames StringToFoodName(string s)
+        {
+            switch (s)
+            {
+                case "pizza":
+                    return FoodNames.pizza;
+                case "sushi":
+                    return FoodNames.sushi;
+                case "burger":
+                    return FoodNames.burger;
+                case "Mc Chicken":
+                    return FoodNames.mcChicken;
+                default:
+                    throw new ArgumentException(s);
+            }
+        }
 
         // I LOVE ARRAYS IN C# (JAVA SUCKS ASS)
         public static Personality[] Personalities =
@@ -128,12 +161,25 @@ namespace tamodachi
         };
 
         public static Food[] foods =
-{
+        {
             new Food(FoodNames.pizza, 5.77, PersonalityNames.happy),
             new Food(FoodNames.sushi, 10.00, PersonalityNames.sad),
             new Food(FoodNames.burger, 7.05, PersonalityNames.contempt),
             new Food(FoodNames.mcChicken, 9.50, PersonalityNames.contempt),
         };
+
+        public static Food FoodNameToFood(FoodNames name)
+        {
+            foreach(Food f in foods)
+            {
+                if (f.name == name)
+                {
+                    return f;
+                }
+            }
+
+            throw new Exception();
+        }
 
         static void Testing()
         {
@@ -142,7 +188,10 @@ namespace tamodachi
 
             Console.WriteLine("\t\tLoading ...");
 
-            Program p = new Program(true);
+            string m = "";
+            bool g = false;
+            
+            Program p = new Program(true, false, ref m, ref g);
 
             Tamodachi happy = p.tamodachis[0];
             Tamodachi sad = p.tamodachis[1];
@@ -184,9 +233,16 @@ namespace tamodachi
             Console.WriteLine($"{contempt.Eat(burger, 2)}");
             */
 
-            p.money = 10.6753464;
+            Store s = new Store(new Food[] {pizza, sushi, burger });
 
-            Console.WriteLine($"\t\t{p.Money()}");
+            p.money = 100;
+
+            string empty = "";
+
+            happy.Eat(pizza, 0);
+            p.foods = new List<FoodNames> {FoodNames.mcChicken, FoodNames.burger};
+
+            p.Save();
 
             /*
             int l = 100000;
@@ -202,6 +258,16 @@ namespace tamodachi
 
             Console.WriteLine("Finished!");
             */
+        }
+
+        public static string FoodNameToString(FoodNames f)
+        {
+            if (f == FoodNames.mcChicken)
+            {
+                return "Mc Chicken";
+            }
+
+            return f.ToString();
         }
 
         static int CharToNum(char c)
@@ -372,7 +438,9 @@ namespace tamodachi
                 Food food = s.Buy(ref p.money, index, ref message);
 
                 Console.WriteLine($"\t{message}");
-                
+
+                p.foods.Add(food.name);
+
                 return food;
             }else
             {
@@ -384,7 +452,10 @@ namespace tamodachi
 
         static Program Startup()
         {
-            Program p = new Program(false);
+            string s = "";
+            bool g = false;
+            
+            Program p = new Program(false, false, ref s, ref g);
 
             Create(ref p, true);
 
@@ -410,11 +481,9 @@ namespace tamodachi
 
             return p;
         }
-        
-        public static void Main(string[] args)
-        {
-            Program p = Startup();
 
+        static void Shopping(ref Program p)
+        {
             Console.WriteLine(p.tamodachis[0].Say("Lets go to the store!"));
 
             Store s = new Store(new Food[] { foods[0], foods[1], foods[3] });
@@ -426,7 +495,7 @@ namespace tamodachi
                 food = Buy(p, s);
             }
 
-            while(true)
+            while (true)
             {
                 Console.WriteLine("Choose someone to give the food to!");
 
@@ -443,6 +512,28 @@ namespace tamodachi
 
                 Console.WriteLine("Incorrect selection!");
             }
+        }
+        
+        public static void Main(string[] args)
+        {
+            /*
+            Program p = Startup();
+
+            Shopping(ref p);
+            */
+
+            string m = "";
+            bool g = false;
+
+            Program p = new Program(true, false, ref m, ref g);
+
+            p.Load();
+
+            Console.WriteLine(p.tamodachis[0].foods[1].like);
+
+            //p.Save();
+
+            //Console.WriteLine(p.Load());
         }
     }
 }

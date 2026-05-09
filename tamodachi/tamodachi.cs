@@ -10,18 +10,18 @@ namespace tamodachi
     {
         public string name { get; }
         
-        Field Movement;
-        Field Speech;
-        Field Energy;
-        Field Thinking;
-        Field Normal;
+        public Field Movement { get; }
+        public Field Speech { get; }
+        public Field Energy { get; }
+        public Field Thinking { get; }
+        public Field Normal { get; }
         
         public Gender gender { get; }
         public List<Gender> fancies { get; }
 
         public Personality Personality { get; }
 
-        public List<FoodRelationship> foods;
+        public List<FoodRelationship> foods = new List<FoodRelationship>();
 
         // This is who I am :)
         public Tamodachi
@@ -31,7 +31,7 @@ namespace tamodachi
             Global.Egender gender, Global.Egender[] fancies
         )
         {
-            this.name = name;
+            this.name = name.Trim();
 
             Movement = new Field(m);
             Speech   = new Field(s);
@@ -75,6 +75,22 @@ namespace tamodachi
                     throw new ArgumentException();
                 }
             }
+        }
+
+        public Tamodachi
+        (
+            string name,
+            int m, int s, int e, int t, int n,
+            Global.Egender gender, Global.Egender[] fancies,
+            FoodRelationship[] foodrelationship
+        ): this
+           (
+            name,
+            m, s, e, t, n,
+            gender, fancies
+           )
+        {   
+            foods = foodrelationship.ToList();
         }
 
         // Can I fuck this person?
@@ -189,40 +205,31 @@ namespace tamodachi
 
             string ind = Global.indent(level);
 
-            if (foods != null)
+            bool check = true;
+
+            foreach (FoodRelationship r in foods)
             {
-                bool check = true;
-
-                foreach (FoodRelationship r in foods)
+                if (r.food == food)
                 {
-                    if (r.food == food)
-                    {
-                        check = false;
+                    check = false;
 
-                        relationship = r;
+                    relationship = r;
 
-                        //Console.WriteLine("FOOD EXISTS");
+                    //Console.WriteLine("FOOD EXISTS");
 
-                        break;
-                    }
+                    break;
                 }
-
-                if (check)
-                {
-                    //Console.WriteLine("FOOD DOESNT EXIST");
-
-                    relationship = new FoodRelationship(food, this);
-
-                    foods.Add(relationship);
-                }
-            }else
-            {
-                //Console.WriteLine("FOODS IS NULL");
-
-                relationship = new FoodRelationship(food, this);
-
-                foods = new List<FoodRelationship> { relationship };
             }
+
+            if (check)
+            {
+                //Console.WriteLine("FOOD DOESNT EXIST");
+
+                relationship = new FoodRelationship(food.name, this);
+
+                foods.Add(relationship);
+            }
+            
 
             string start = $"{ind}{name} is eating {food}\n{ind}\t";
 
@@ -241,7 +248,6 @@ namespace tamodachi
             {
                 return $"{start}{name} REALLY liked it!!!";
             }
-
         }
 
         public string MatchToString(Tamodachi person)

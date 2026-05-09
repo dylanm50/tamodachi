@@ -9,8 +9,10 @@ namespace tamodachi
         public Food food { get; }
         public int like { get; }
 
-        public FoodRelationship(Food food, Tamodachi person)
+        public FoodRelationship(Global.FoodNames name, Tamodachi person)
         {
+            Food food = Global.FoodNameToFood(name);
+
             this.food = food;
 
             Random random = new Random();
@@ -26,6 +28,12 @@ namespace tamodachi
             {
                 like = random.Next(1, 5);
             }
+        }
+
+        public FoodRelationship(Global.FoodNames name, int like)
+        {
+            Food food = Global.FoodNameToFood(name);
+            this.like = like;
         }
     }
 }
