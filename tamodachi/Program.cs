@@ -241,7 +241,7 @@ namespace tamodachi
         public Program(bool testing, bool load, ref string message, ref bool newGame)
         {
             if (testing)
-            {
+            {   
                 tamodachis.Add(
                 new Tamodachi
                 (

@@ -11,6 +11,8 @@ namespace tamodachi
 
         public FoodRelationship(Global.FoodNames name, Tamodachi person)
         {
+            Console.WriteLine("GOT HERE");
+            
             Food food = Global.FoodNameToFood(name);
 
             this.food = food;

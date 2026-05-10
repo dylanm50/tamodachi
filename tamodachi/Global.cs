@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Timers;
@@ -46,24 +47,55 @@ namespace tamodachi
             pizza,
             sushi,
             burger,
-            mcChicken
+            mcChicken,
+            ramen,
+            porridge,
+            KFCvalueMeal,
+            bobba,
+            jerky,
+            TVdinner,
+            skittles,
+            cake,
+            peanuts,
+            cola,
+            watermellon,
+            carbonara,
+            assassinsSpaghetti,
+            pancakes
+        };
+
+        static Dictionary<FoodNames, string> foodDict = new Dictionary<FoodNames, string>
+        {
+            { FoodNames.pizza             , "pizza"                },
+            { FoodNames.sushi             , "sushi"                },
+            { FoodNames.burger            , "burger"               },
+            { FoodNames.mcChicken         , "MC Chicken"           },
+            { FoodNames.ramen             , "ramen"                },
+            { FoodNames.porridge          , "porridge"             },
+            { FoodNames.KFCvalueMeal      , "KFC Value Meal"       },
+            { FoodNames.bobba             , "bobba"                },
+            { FoodNames.jerky             , "jerky"                },
+            { FoodNames.TVdinner          , "TV Dinner"            },
+            { FoodNames.skittles          , "skittles"             },
+            { FoodNames.cake              , "cake"                 },
+            { FoodNames.cola              , "cola"                 },
+            { FoodNames.watermellon       , "watermellon"          },
+            { FoodNames.carbonara         , "carbonara"            },
+            { FoodNames.peanuts           , "peanuts"              },
+            { FoodNames.assassinsSpaghetti, "Assassin's Spaghetti" },
+            { FoodNames.pancakes          , "pancakes"             }
         };
 
         public static FoodNames StringToFoodName(string s)
         {
-            switch (s)
+            FoodNames food = foodDict.FirstOrDefault(x => x.Value == s).Key;
+
+            if (food.Equals(default(KeyValuePair<FoodNames, string>)))
             {
-                case "pizza":
-                    return FoodNames.pizza;
-                case "sushi":
-                    return FoodNames.sushi;
-                case "burger":
-                    return FoodNames.burger;
-                case "Mc Chicken":
-                    return FoodNames.mcChicken;
-                default:
-                    throw new ArgumentException(s);
+                throw new ArgumentException(s);
             }
+
+            return food;
         }
 
         // I LOVE ARRAYS IN C# (JAVA SUCKS ASS)
@@ -160,16 +192,31 @@ namespace tamodachi
             )
         };
 
+        // don't add prices that are more granular than one cent
         public static Food[] foods =
         {
-            new Food(FoodNames.pizza, 5.77, PersonalityNames.happy),
-            new Food(FoodNames.sushi, 10.00, PersonalityNames.sad),
-            new Food(FoodNames.burger, 7.05, PersonalityNames.contempt),
-            new Food(FoodNames.mcChicken, 9.50, PersonalityNames.contempt),
+            new Food( FoodNames.pizza              , 05.77 , PersonalityNames.happy    ),
+            new Food( FoodNames.sushi              , 10.00 , PersonalityNames.sad      ),
+            new Food( FoodNames.burger             , 07.05 , PersonalityNames.contempt ),
+            new Food( FoodNames.mcChicken          , 09.50 , PersonalityNames.contempt ),
+            new Food( FoodNames.ramen              , 12.00 , PersonalityNames.contempt ),
+            new Food( FoodNames.porridge           , 01.00 , PersonalityNames.contempt ),
+            new Food( FoodNames.KFCvalueMeal       , 09.00 , PersonalityNames.happy    ),
+            new Food( FoodNames.bobba              , 08.50 , PersonalityNames.happy    ),
+            new Food( FoodNames.jerky              , 09.50 , PersonalityNames.happy    ),
+            new Food( FoodNames.TVdinner           , 05.06 , PersonalityNames.sad      ),
+            new Food( FoodNames.skittles           , 09.50 , PersonalityNames.happy    ),
+            new Food( FoodNames.cake               , 20.00 , PersonalityNames.happy    ),
+            new Food( FoodNames.peanuts            , 07.00 , PersonalityNames.happy    ),
+            new Food( FoodNames.cola               , 03.50 , PersonalityNames.happy    ),
+            new Food( FoodNames.watermellon        , 30.00 , PersonalityNames.happy    ),
+            new Food( FoodNames.carbonara          , 22.00 , PersonalityNames.sad      ),
+            new Food( FoodNames.assassinsSpaghetti , 21.00 , PersonalityNames.sad      ),
+            new Food( FoodNames.pancakes           , 09.00 , PersonalityNames.happy    )
         };
 
         public static Food FoodNameToFood(FoodNames name)
-        {
+        {   
             foreach(Food f in foods)
             {
                 if (f.name == name)
@@ -262,12 +309,14 @@ namespace tamodachi
 
         public static string FoodNameToString(FoodNames f)
         {
-            if (f == FoodNames.mcChicken)
+            string s = foodDict[f];
+
+            if (s == null)
             {
-                return "Mc Chicken";
+                throw new ArgumentException(f.ToString());
             }
 
-            return f.ToString();
+            return s;
         }
 
         static int CharToNum(char c)
@@ -409,15 +458,31 @@ namespace tamodachi
             return s;
         }
 
-        static Food Buy(Program p, Store s)
+        public static Food BuyItem(ref double wallet, Food food, ref string message)
         {
-            Console.WriteLine(s);
+            double newWallet = wallet - food.price;
 
+            if (newWallet >= 0)
+            {
+                wallet = newWallet;
+
+                message = $"You have bought {food} for {food.price:C}.\nYour new balance is {wallet:C}.";
+
+                return food;
+            }
+
+            message = $"You don't have the funds to buy that!";
+
+            return null;
+        }
+
+        static char ShowStock(Program p, Store s)
+        {
             Console.WriteLine($"\tYou have {p.Money()}");
-            
+
             string selection = "";
 
-            for(int i = 0; i < s.stock.Length; i ++)
+            for (int i = 0; i < s.stock.Length; i++)
             {
                 selection += $"\tPress {i + 1} for {s.stock[i]} for {s.stock[i].price:C}";
 
@@ -429,7 +494,106 @@ namespace tamodachi
 
             Console.WriteLine(selection);
 
-            int index = CharToNum(Console.ReadLine()[0]) - 1;
+            Console.WriteLine("Press 'a' to view more stock");
+
+            return Console.ReadLine()[0];
+        }
+
+        static Food Buy(Program p, Store s)
+        {
+            Console.WriteLine(s);
+
+            char selection;
+            
+            while (true)
+            {
+                selection = ShowStock(p, s);
+
+                if (selection == 'a')
+                {
+                    int count = p.foods.Count();
+                    int stockIndex = 0;
+
+                    Food food = null;
+
+                    while (true)
+                    {
+                        
+                        int max = stockIndex + 8;
+
+                        if (max > count)
+                        {
+                            max = count;
+                        }
+
+                        int c = 1;
+                        string message = "";
+
+                        for (int i = stockIndex; i < max; i ++)
+                        {
+                            message += $"\tPress {c} for {p.foods[i]} for {FoodNameToFood(p.foods[i]).price:C}\n";
+
+                            c ++; // a worse language
+                        }
+
+                        Console.WriteLine(message);
+                        Console.WriteLine("Press 'x' to go back or 'c' to go forward or 'a' to go back to today's items");
+
+                        char selection2 = Console.ReadLine()[0];
+
+                        if (selection2 == 'x')
+                        {
+                            stockIndex -= 9;
+
+                            if (stockIndex < 0)
+                            {
+                                stockIndex = 0;
+                            }
+
+                        }
+                        else if (selection2 == 'c')
+                        {
+                            stockIndex += 9;
+
+                            if (stockIndex >= count)
+                            {
+                                stockIndex = count - 9;
+                            }
+                        }
+                        else if (selection2 == 'a')
+                        {
+                            break;
+                        }
+                        else
+                        { 
+                            int sel = CharToNum(selection2) - 1;
+
+                            if (sel > -1 && sel < 9)
+                            {
+                                food = FoodNameToFood(p.foods[stockIndex + sel]);
+                                string message2 = "";
+                                
+                                food = BuyItem(ref p.money, food, ref message2);
+
+                                Console.WriteLine(message2);
+
+                                return food;
+                            }else
+                            {
+                                Console.WriteLine("Incorrect selection");
+
+                                return null;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            int index = CharToNum(selection) - 1;
 
             if (index > -1 && index < s.stock.Length)
             {
@@ -438,8 +602,6 @@ namespace tamodachi
                 Food food = s.Buy(ref p.money, index, ref message);
 
                 Console.WriteLine($"\t{message}");
-
-                p.foods.Add(food.name);
 
                 return food;
             }else
@@ -516,12 +678,38 @@ namespace tamodachi
         
         public static void Main(string[] args)
         {
+            string message = "";
+            bool check = false;
+
+            Program p = new Program(false, false, ref message, ref check);
+            p.money = 100;
+            p.foods = new List<FoodNames>
+            {
+                FoodNames.pizza,
+                FoodNames.sushi,
+                FoodNames.burger,
+                FoodNames.mcChicken,
+                FoodNames.ramen,
+                FoodNames.porridge,
+                FoodNames.KFCvalueMeal,
+                FoodNames.bobba,
+                FoodNames.jerky,
+                FoodNames.TVdinner,
+                FoodNames.skittles,
+                FoodNames.cake,
+                FoodNames.peanuts,
+                FoodNames.cola,
+                FoodNames.watermellon,
+                FoodNames.carbonara,
+                FoodNames.assassinsSpaghetti,
+                FoodNames.pancakes
+            };
+
+            Food[] stock = { foods[0], foods[1], foods[2] };
+
+            Console.WriteLine(Buy(p, new Store(stock)));
+            
             /*
-            Program p = Startup();
-
-            Shopping(ref p);
-            */
-
             string m = "";
             bool g = false;
 
@@ -530,6 +718,7 @@ namespace tamodachi
             p.Load();
 
             Console.WriteLine(p.tamodachis[0].foods[1].food);
+            */
 
             //p.Save();
 

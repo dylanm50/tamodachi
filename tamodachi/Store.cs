@@ -22,20 +22,8 @@ namespace tamodachi
         public Food Buy(ref double wallet, int food, ref string message)
         {
             Food item = stock[food];
-            double newWallet = wallet - item.price;
 
-            if (newWallet >= 0)
-            {
-                wallet = newWallet;
-
-                message = $"You have bought {item} for {item.price:C}.\nYour new balance is {wallet:C}.";
-
-                return item;
-            }
-
-            message = $"You don't have the funds to buy that!";
-
-            return null;
+            return Global.BuyItem(ref wallet, item,ref message);
         }
 
         public override string ToString()
