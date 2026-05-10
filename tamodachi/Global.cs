@@ -557,7 +557,7 @@ namespace tamodachi
 
                             if (stockIndex >= count)
                             {
-                                stockIndex = count - 9;
+                                stockIndex = count - 8;
                             }
                         }
                         else if (selection2 == 'a')
