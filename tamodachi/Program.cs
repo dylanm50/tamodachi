@@ -31,6 +31,11 @@ namespace tamodachi
         {
             Console.WriteLine("Saving progress, don't close the program or turn off the system!");
 
+            if (tamodachis == null || objects == null || foods == null)
+            {
+                throw new Exception(null); // This should not happen
+            }
+
             try
             {
                 using var writer = new StreamWriter("save.txt");
@@ -103,7 +108,14 @@ namespace tamodachi
         public bool Load()
         {
             try
-            {   
+            {
+                //setting everthing to a blank slate 
+                tamodachis = new List<Tamodachi>();
+                objects = new List<string>();
+                foods = new List<FoodNames>();
+                inventory = new List<FoodItem>();
+                money = 0;
+                
                 string[] lines = File.ReadAllLines("save.txt");
                 int i = 0;
 
@@ -168,8 +180,10 @@ namespace tamodachi
                                 )
                             );
                         }
+
+                        i ++;
                     }
-                    else if (lines[i += 1] == "objects")
+                    else if (lines[i] == "objects")
                     {
                         string s = lines[i + 1];
                         int k = 0;
@@ -319,6 +333,67 @@ namespace tamodachi
                     newGame = true;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            string s = $"{time}\n";
+            s += "\tTamodachis\n";
+            
+            foreach(Tamodachi t in tamodachis)
+            {  
+                s += $"\t\t{t.name}\n";
+
+                s += "\t\t\tfields:\n";
+                s += $"\t\t\t\t{t.Movement.value}\n";
+                s += $"\t\t\t\t{t.Speech.value}\n";
+                s += $"\t\t\t\t{t.Energy.value}\n";
+                s += $"\t\t\t\t{t.Thinking.value}\n";
+                s += $"\t\t\t\t{t.Normal.value}\n";
+
+                s += $"\t\t\tgender: {t.gender}\n";
+
+                s += "\t\t\tlikes:\n";
+
+                foreach (Gender g in t.fancies)
+                {
+                    s += $"\t\t\t\t{g}\n";
+                }
+
+                s += "\t\t\tfoods:\n";
+
+                foreach (FoodRelationship r in t.foods)
+                {
+                    s += $"\t\t\t\t{r.food}\n";
+                    s += $"\t\t\t\t\t{r.like}\n";
+                }
+            }
+
+            s += "\tObjects\n";
+
+            foreach(string o in objects)
+            {
+                s += $"\t\t{o}\n";
+            }
+
+            s += $"\tmoney:{money:C}\n";
+
+            s += "\tfoods:\n";
+
+            foreach (FoodNames f in foods)
+            {
+                s += $"\t\t{Global.FoodNameToString(f)}\n";
+            }
+
+            s += "\tinventory:";
+
+            foreach (FoodItem i in inventory)
+            {
+                s += $"\t\t{i.food}\n";
+                s += $"\t\t\t{i.amount}\n";
+            }
+
+            return s;
         }
     }
 }

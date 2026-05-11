@@ -678,6 +678,7 @@ namespace tamodachi
         
         public static void Main(string[] args)
         {
+            /*
             string message = "";
             bool check = false;
 
@@ -708,17 +709,21 @@ namespace tamodachi
             Food[] stock = { foods[0], foods[1], foods[2] };
 
             Console.WriteLine(Buy(p, new Store(stock)));
-            
-            /*
+            */
+
             string m = "";
             bool g = false;
 
-            Program p = new Program(true, false, ref m, ref g);
+            Program p = new Program(false, false, ref m, ref g);
 
+            p.tamodachis = new List<Tamodachi> {new Tamodachi("test", 1, 1, 1, 1, 1, Egender.male, new Egender[] {})};
+            p.objects = new List<string> {"test object"};
+            p.foods = new List<FoodNames> {FoodNames.pizza};
+
+            p.Save();
             p.Load();
 
-            Console.WriteLine(p.tamodachis[0].foods[1].food);
-            */
+            Console.WriteLine(p);
 
             //p.Save();
 
