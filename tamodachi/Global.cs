@@ -519,7 +519,7 @@ namespace tamodachi
                     while (true)
                     {
                         
-                        int max = stockIndex + 8;
+                        int max = stockIndex + 9;
 
                         if (max > count)
                         {
@@ -557,7 +557,7 @@ namespace tamodachi
 
                             if (stockIndex >= count)
                             {
-                                stockIndex = count - 8;
+                                stockIndex = count - 9;
                             }
                         }
                         else if (selection2 == 'a')
@@ -678,7 +678,7 @@ namespace tamodachi
         
         public static void Main(string[] args)
         {
-            /*
+            
             string message = "";
             bool check = false;
 
@@ -709,8 +709,9 @@ namespace tamodachi
             Food[] stock = { foods[0], foods[1], foods[2] };
 
             Console.WriteLine(Buy(p, new Store(stock)));
-            */
+            
 
+            /*
             string m = "";
             bool g = false;
 
@@ -724,6 +725,7 @@ namespace tamodachi
             p.Load();
 
             Console.WriteLine(p);
+            */
 
             //p.Save();
 
