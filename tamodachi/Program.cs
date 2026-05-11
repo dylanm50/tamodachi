@@ -200,7 +200,7 @@ namespace tamodachi
                         i += k;
                     }else if (lines[i] == "money")
                     {
-                        money = int.Parse(lines[i + 1].Trim());
+                        money = double.Parse(lines[i + 1].Trim());
 
                         i ++;
                     }else if (lines[i] == "foods")
