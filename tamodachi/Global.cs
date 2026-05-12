@@ -494,9 +494,88 @@ namespace tamodachi
 
             Console.WriteLine(selection);
 
-            Console.WriteLine("Press 'a' to view more stock");
+            Console.WriteLine("Press 'a' to view more stock or press 'q' to exit the store");
 
             return Console.ReadLine()[0];
+        }
+
+        static int Menue(Func<int, int, string> funS, Func<int, int, object> funO, int count, ref object o, string s = "")
+        {
+            int stockIndex = 0;
+
+            o = null;
+
+            while (true)
+            { 
+                int max = stockIndex + 9;
+
+                if (max > count)
+                {
+                    max = count;
+                }
+
+                int c = 1;
+                string message = "";
+
+                for (int i = stockIndex; i < max; i++)
+                {
+                    message += funS(i, c) + "\n";
+
+                    c++; // a worse language
+                }
+
+                message = message.Remove(message.Length - 1);
+
+                Console.WriteLine(message);
+                Console.WriteLine($"Press 'x' to go back or 'c' to go forward {s}, press 'q' to exit the store");
+
+                char selection2 = Console.ReadLine()[0];
+
+                if (selection2 == 'x')
+                {
+                    stockIndex -= 9;
+
+                    if (stockIndex < 0)
+                    {
+                        stockIndex = 0;
+                    }
+
+                }
+                else if (selection2 == 'c')
+                {
+                    stockIndex += 9;
+
+                    if (stockIndex >= count)
+                    {
+                        stockIndex = count - 9;
+                    }
+                }
+                else if (selection2 == 'a')
+                {
+                    return 0;
+                }
+                else if (selection2 == 'q')
+                {
+                    return 2;
+                }
+                else
+                {
+                    int sel = CharToNum(selection2) - 1;
+
+                    if (sel > -1 && sel < 9)
+                    {
+                        o = funO(sel, stockIndex);
+
+                        return 1;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Incorrect selection");
+
+                        return -1;
+                    }
+                }
+            }
         }
 
         static Food Buy(Program p, Store s)
@@ -504,86 +583,41 @@ namespace tamodachi
             Console.WriteLine(s);
 
             char selection;
-            
+
             while (true)
             {
                 selection = ShowStock(p, s);
 
-                if (selection == 'a')
+                if (selection == 'q')
                 {
-                    int count = p.foods.Count();
-                    int stockIndex = 0;
-
-                    Food food = null;
-
+                    return null;
+                }
+                else if (selection == 'a')
+                {
                     while (true)
                     {
-                        
-                        int max = stockIndex + 9;
+                        Object food = null;
 
-                        if (max > count)
+                        int result = Menue
+                            (
+                                (i, c) => $"\tPress {c} to buy {FoodNameToString(p.foods[i])} for {FoodNameToFood(p.foods[i]).price:C}",
+                                (i, j) => FoodNameToFood(p.foods[j + i]),
+                                p.foods.Count(),
+                                ref food,
+                                "or 'a' to go back to today's items"
+                            );
+
+                        if (result == 1)
                         {
-                            max = count;
+                            return (Food) food;
                         }
-
-                        int c = 1;
-                        string message = "";
-
-                        for (int i = stockIndex; i < max; i ++)
+                        else if (result == 2)
                         {
-                            message += $"\tPress {c} for {p.foods[i]} for {FoodNameToFood(p.foods[i]).price:C}\n";
-
-                            c ++; // a worse language
+                            return null;
                         }
-
-                        Console.WriteLine(message);
-                        Console.WriteLine("Press 'x' to go back or 'c' to go forward or 'a' to go back to today's items");
-
-                        char selection2 = Console.ReadLine()[0];
-
-                        if (selection2 == 'x')
-                        {
-                            stockIndex -= 9;
-
-                            if (stockIndex < 0)
-                            {
-                                stockIndex = 0;
-                            }
-
-                        }
-                        else if (selection2 == 'c')
-                        {
-                            stockIndex += 9;
-
-                            if (stockIndex >= count)
-                            {
-                                stockIndex = count - 9;
-                            }
-                        }
-                        else if (selection2 == 'a')
+                        else if (result == 0)
                         {
                             break;
-                        }
-                        else
-                        { 
-                            int sel = CharToNum(selection2) - 1;
-
-                            if (sel > -1 && sel < 9)
-                            {
-                                food = FoodNameToFood(p.foods[stockIndex + sel]);
-                                string message2 = "";
-                                
-                                food = BuyItem(ref p.money, food, ref message2);
-
-                                Console.WriteLine(message2);
-
-                                return food;
-                            }else
-                            {
-                                Console.WriteLine("Incorrect selection");
-
-                                return null;
-                            }
                         }
                     }
                 }
@@ -675,10 +709,18 @@ namespace tamodachi
                 Console.WriteLine("Incorrect selection!");
             }
         }
+
+        static Program Empty()
+        {
+            string m = "";
+            bool g = false;
+
+            return new Program(false, false, ref m, ref g);
+        }
         
         public static void Main(string[] args)
         {
-            
+            /*
             string message = "";
             bool check = false;
 
@@ -705,11 +747,14 @@ namespace tamodachi
                 FoodNames.assassinsSpaghetti,
                 FoodNames.pancakes
             };
+            
 
             Food[] stock = { foods[0], foods[1], foods[2] };
 
             Console.WriteLine(Buy(p, new Store(stock)));
-            
+            */
+
+            //Program p = Startup();
 
             /*
             string m = "";
@@ -730,6 +775,27 @@ namespace tamodachi
             //p.Save();
 
             //Console.WriteLine(p.Load());
+
+            Program p = Empty();
+
+            for (int i = 0; i < 22; i++)
+            {
+                p.tamodachis.Add(new Tamodachi(i.ToString(), 1, 1, 1, 1, 1, Egender.male, new Egender[0]));
+            }
+
+            Object tamodachi = null;
+
+            int result = Menue(
+                (i, c) => $"press {c} to select {p.tamodachis[i].name}",
+                (i, j) => p.tamodachis[j + i],
+                p.tamodachis.Count(),
+                ref tamodachi
+            );
+
+            if (result == 1)
+            {
+                Console.WriteLine((Tamodachi)tamodachi);
+            }
         }
     }
 }
