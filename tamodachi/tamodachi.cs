@@ -271,12 +271,12 @@ namespace tamodachi
             // Adding each gender
             foreach (Gender g in fancies)
             {
-                s += $"{g} ";
+                s += $" {g}";
             }
 
             if (fancies.Count == 0)
             {
-                s += "Noone";
+                s += " Noone";
             }
 
             return s;

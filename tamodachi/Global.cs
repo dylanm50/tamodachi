@@ -69,7 +69,7 @@ namespace tamodachi
             { FoodNames.pizza             , "pizza"                },
             { FoodNames.sushi             , "sushi"                },
             { FoodNames.burger            , "burger"               },
-            { FoodNames.mcChicken         , "MC Chicken"           },
+            { FoodNames.mcChicken         , "Mc Chicken"           },
             { FoodNames.ramen             , "ramen"                },
             { FoodNames.porridge          , "porridge"             },
             { FoodNames.KFCvalueMeal      , "KFC Value Meal"       },
@@ -783,18 +783,31 @@ namespace tamodachi
                 p.tamodachis.Add(new Tamodachi(i.ToString(), 1, 1, 1, 1, 1, Egender.male, new Egender[0]));
             }
 
-            Object tamodachi = null;
-
-            int result = Menue(
-                (i, c) => $"press {c} to select {p.tamodachis[i].name}",
-                (i, j) => p.tamodachis[j + i],
-                p.tamodachis.Count(),
-                ref tamodachi
-            );
-
-            if (result == 1)
+            while (true)
             {
-                Console.WriteLine((Tamodachi)tamodachi);
+                Object tamodachi = null;
+
+                int result = Menue(
+                    (i, c) => $"press {c} to select {p.tamodachis[i].name}",
+                    (i, j) => p.tamodachis[j + i],
+                    p.tamodachis.Count(),
+                    ref tamodachi
+                );
+
+                if (result == 2)
+                {
+                    break;
+                }
+                else if (result == 1)
+                {
+                    Console.WriteLine((Tamodachi)tamodachi);
+
+                    break;
+                }
+                else if (result == 0)
+                {
+                    Console.WriteLine("Incorrect selection!");
+                }
             }
         }
     }
