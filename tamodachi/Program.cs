@@ -251,14 +251,12 @@ namespace tamodachi
                                 s = lines[i + 10 + j + k];
 
                                 if (s.Length < 3)
-                                {
-                                    k += 0;
-                                    
+                                {   
                                     break;
                                 }
                             }
 
-                            if (foodRelationships.Count() == 0 && fancies.Count() == 0)
+                            if (fancies.Count() == 0)
                             {
                                 h += 2;
                             }
@@ -524,9 +522,12 @@ namespace tamodachi
 
             s += "\ttodaysFoods:\n";
 
-            foreach (Global.FoodNames f in todaysFoods)
+            if (todaysFoods != null)
             {
-                s += $"\t\t{Global.FoodNameToString(f)}\n";
+                foreach (Global.FoodNames f in todaysFoods)
+                {
+                    s += $"\t\t{Global.FoodNameToString(f)}\n";
+                }
             }
 
             return s;
