@@ -19,7 +19,7 @@ namespace tamodachi
         public FoodItem(Global.FoodNames food, int amount)
         {
             this.food = food;
-            amount = 1;
+            this.amount = amount;
         }
 
         public void Add()

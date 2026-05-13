@@ -228,11 +228,6 @@ namespace tamodachi
 
                             int h = 0;
 
-                            if (fancies.Count() == 0)
-                            {
-                                h = -2;
-                            }
-
                             int k = 0;
                             s = lines[i + 10 + j];
 
@@ -254,11 +249,6 @@ namespace tamodachi
                                 {   
                                     break;
                                 }
-                            }
-
-                            if (fancies.Count() == 0)
-                            {
-                                h += 2;
                             }
                             
                             i += 10 + j + k + h;
@@ -320,6 +310,8 @@ namespace tamodachi
                         {
                             Global.FoodNames food = Global.StringToFoodName(s.Trim());
                             int amount = int.Parse(lines[i + 2 + k].Trim());
+
+                            Console.WriteLine(amount);
 
                             inventory.Add(new FoodItem(food, amount));
 
@@ -464,7 +456,7 @@ namespace tamodachi
 
         public override string ToString()
         {
-            string s = $"{time}\n";
+            string s = $"{lastTime}\n";
             s += "\tTamodachis\n";
             
             foreach(Tamodachi t in tamodachis)
@@ -503,7 +495,7 @@ namespace tamodachi
                 s += $"\t\t{o}\n";
             }
 
-            s += $"\tmoney:{money:C}\n";
+            s += $"\tmoney: {money:C}\n";
 
             s += "\tfoods:\n";
 
