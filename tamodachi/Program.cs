@@ -1,11 +1,14 @@
-﻿using static tamodachi.Global;
+﻿using System.ComponentModel.Design;
+using static tamodachi.Global;
 
 namespace tamodachi
 {
     public class Program
     {
         //NO STATIC GLOBAL VARS, they belong in global
-        public System.TimeOnly time { get; } = TimeOnly.FromDateTime(DateTime.Now);
+        public System.DateTime time { get; } = DateTime.Now;
+
+        public System.DateTime lastTime = new DateTime(1999, 1, 1);
 
         public List<Tamodachi> tamodachis = new List<Tamodachi>();
 
@@ -17,6 +20,25 @@ namespace tamodachi
         
         public List<FoodItem> inventory = new List<FoodItem>();
 
+        public FoodNames[] todaysFoods = null;
+
+         void ResetState()
+         {
+            lastTime = new DateTime(1999, 1, 1);
+
+            tamodachis = new List<Tamodachi>();
+
+            objects = new List<string>();
+
+            money = 0;
+
+            foods = new List<Global.FoodNames>();
+
+            inventory = new List<FoodItem>();
+
+            todaysFoods = null;
+        }
+
         public static string mTime(System.TimeOnly time)
         {
             return time.ToString("HH:mm");
@@ -27,11 +49,41 @@ namespace tamodachi
             return $"You have {money:C}";
         }
 
+        public void UseItem(FoodNames food)
+        {
+            for (int i = 0; i < inventory.Count(); i ++)
+            {
+                if (food == inventory[i].food)
+                {
+                    inventory[i].Subtract();
+
+                    return;
+                }
+            }
+
+            throw new ArgumentException(food.ToString());
+        }
+
+        public void StoreItem(FoodNames food)
+        {
+            for (int i = 0; i < inventory.Count(); i++)
+            {
+                if (food == inventory[i].food)
+                {
+                    inventory[i].Add();
+
+                    return;
+                }
+            }
+
+            inventory.Add(new FoodItem(food));
+        }
+
         public void Save()
         {
             Console.WriteLine("Saving progress, don't close the program or turn off the system!");
 
-            if (tamodachis == null || objects == null || foods == null)
+            if (tamodachis == null || objects == null)
             {
                 throw new Exception(null); // This should not happen
             }
@@ -39,6 +91,8 @@ namespace tamodachi
             try
             {
                 using var writer = new StreamWriter("save.txt");
+
+                writer.WriteLine(time);
 
                 writer.WriteLine($"tamodachis");
 
@@ -97,6 +151,16 @@ namespace tamodachi
                     writer.WriteLine($"\t\t{i.amount}");
                 }
 
+                writer.WriteLine("todaysFoods");
+
+                if (todaysFoods != null)
+                {
+                    foreach (FoodNames f in todaysFoods)
+                    {
+                        writer.WriteLine($"\t{Global.FoodNameToString(f)}");
+                    }
+                }
+
                 Console.WriteLine("Saving successful!");
             }
             catch (Exception e)
@@ -121,7 +185,13 @@ namespace tamodachi
 
                 while(true)
                 {
-                    if (lines[i] == "tamodachis")
+                    if (i == 0)
+                    {
+                        lastTime = DateTime.Parse(lines[i]);
+
+                        i ++;
+                    }
+                    else if (lines[i] == "tamodachis")
                     {
                         while(lines[i + 1][0] == '\t')
                         {
@@ -197,12 +267,13 @@ namespace tamodachi
                             s = lines[i + 1 + k];
                         }
 
-                        i += k;
-                    }else if (lines[i] == "money")
+                        i += k + 1;
+                    }
+                    else if (lines[i] == "money")
                     {
                         money = double.Parse(lines[i + 1].Trim());
 
-                        i ++;
+                        i += 2;
                     }else if (lines[i] == "foods")
                     {
                         string s = lines[i + 1];
@@ -217,14 +288,14 @@ namespace tamodachi
                             s = lines[i + 1 + k];
                         }
 
-                        i += k;
+                        i += k + 1;
                     }
                     else if (lines[i] == "inventory")
                     {
                         string s = lines[i + 1];
                         int k = 0;
 
-                        while (true)
+                        while (s[0] == '\t')
                         {
                             Global.FoodNames food = Global.StringToFoodName(s.Trim());
                             int amount = int.Parse(lines[i + 2 + k].Trim());
@@ -233,9 +304,34 @@ namespace tamodachi
 
                             k += 2;
 
-                            if (i + 1 + k >= lines.Length)
+                            s = lines[i + 1 + k];
+                        }
+
+                        i += k + 1;
+                    }
+                    else if (lines[i] == "todaysFoods")
+                    {
+                        // There might be no values so we have to check for this
+                        if (lines.Length - 1 < i + 1)
+                        {
+                            return true;
+                        }
+                        
+                        string s = lines[i + 1];
+                        int k = 0;
+
+                        todaysFoods = new FoodNames[3];
+
+                        while (true)
+                        {
+                            Global.FoodNames food = Global.StringToFoodName(s.Trim());
+                            todaysFoods = todaysFoods.Append(food).ToArray();
+
+                            k ++;
+
+                            if (i + 1 + k > lines.Length - 1)
                             {
-                                return true; // read the entire file :)
+                                return true;
                             }
 
                             s = lines[i + 1 + k];
@@ -243,11 +339,16 @@ namespace tamodachi
                     }
                     else
                     {
+                        ResetState();
+                        
                         return false;
                     }
                 }
-            }catch
+            }
+            catch
             {
+                ResetState();
+                
                 return false;
             }
         }
@@ -325,6 +426,11 @@ namespace tamodachi
                 
                 if (Load())
                 {
+                    if (lastTime.Date != time.Date)
+                    {
+                        todaysFoods = new FoodNames[3];
+                    }
+                    
                     message += "loaded save";
                     newGame = false;
                 }else
@@ -391,6 +497,13 @@ namespace tamodachi
             {
                 s += $"\t\t{i.food}\n";
                 s += $"\t\t\t{i.amount}\n";
+            }
+
+            s += "\ttodaysFoods";
+
+            foreach (Global.FoodNames f in todaysFoods)
+            {
+                s += $"\t\t{Global.FoodNameToString(f)}";
             }
 
             return s;

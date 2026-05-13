@@ -28,7 +28,7 @@ namespace tamodachi
 
         public static Egender StringToEgender(string s)
         {
-            switch(s)
+            switch (s)
             {
                 case "male":
                     return Egender.male;
@@ -39,7 +39,7 @@ namespace tamodachi
                 default:
                     throw new ArgumentException(s);
             }
-               
+
         }
 
         public enum FoodNames
@@ -216,8 +216,8 @@ namespace tamodachi
         };
 
         public static Food FoodNameToFood(FoodNames name)
-        {   
-            foreach(Food f in foods)
+        {
+            foreach (Food f in foods)
             {
                 if (f.name == name)
                 {
@@ -237,7 +237,7 @@ namespace tamodachi
 
             string m = "";
             bool g = false;
-            
+
             Program p = new Program(true, false, ref m, ref g);
 
             Tamodachi happy = p.tamodachis[0];
@@ -252,8 +252,8 @@ namespace tamodachi
             Console.WriteLine($"\t\t{sad}");
             Console.WriteLine($"\t\t{contempt}");
             Console.WriteLine($"\t\t{happy.MatchToString(sad)}");
-            Console.WriteLine($"\t\t{happy.Talk("ummm idk what to say XD", p.time)}");
-            Console.WriteLine($"\t\t{happy.Talk("imm be a STAR", p.time)}");
+            Console.WriteLine($"\t\t{happy.Talk("ummm idk what to say XD", TimeOnly.FromTimeSpan(p.time.TimeOfDay))}");
+            Console.WriteLine($"\t\t{happy.Talk("imm be a STAR", TimeOnly.FromTimeSpan(p.time.TimeOfDay))}");
 
             string o = p.objects[new Random().Next(p.objects.Count() - 1)];
 
@@ -280,14 +280,14 @@ namespace tamodachi
             Console.WriteLine($"{contempt.Eat(burger, 2)}");
             */
 
-            Store s = new Store(new Food[] {pizza, sushi, burger });
+            Store s = new Store(new Food[] { pizza, sushi, burger });
 
             p.money = 100;
 
             string empty = "";
 
             happy.Eat(pizza, 0);
-            p.foods = new List<FoodNames> {FoodNames.mcChicken, FoodNames.burger};
+            p.foods = new List<FoodNames> { FoodNames.mcChicken, FoodNames.burger };
 
             p.Save();
 
@@ -321,14 +321,14 @@ namespace tamodachi
 
         static int CharToNum(char c)
         {
-            return (int) c - 48;
+            return (int)c - 48;
         }
 
         static int StringToInt(string s)
         {
-            if(s.Length == 2)
+            if (s.Length == 2)
             {
-                return CharToNum(s[1]) * - 1;
+                return CharToNum(s[1]) * -1;
             }
             else if (s.Length == 1)
             {
@@ -341,7 +341,7 @@ namespace tamodachi
         static bool Create(ref Program p, bool manditory)
         {
             string name;
-            
+
             while (true)
             {
 
@@ -499,14 +499,14 @@ namespace tamodachi
             return Console.ReadLine()[0];
         }
 
-        static int Menue(Func<int, int, string> funS, Func<int, int, object> funO, int count, ref object o, string s = "")
+        static int Menu(Func<int, int, string> funS, Func<int, object> funO, int count, ref object o, string s = "")
         {
             int stockIndex = 0;
 
             o = null;
 
             while (true)
-            { 
+            {
                 int max = stockIndex + 9;
 
                 if (max > count)
@@ -524,10 +524,13 @@ namespace tamodachi
                     c++; // a worse language
                 }
 
-                message = message.Remove(message.Length - 1);
+                if (message.Length > 0)
+                {
+                    message = message.Remove(message.Length - 1);
+                }
 
                 Console.WriteLine(message);
-                Console.WriteLine($"Press 'x' to go back or 'c' to go forward {s}, press 'q' to exit the store");
+                Console.WriteLine($"Press 'x' to go back or 'c' to go forward {s}, press 'q' to exit");
 
                 char selection2 = Console.ReadLine()[0];
 
@@ -544,10 +547,16 @@ namespace tamodachi
                 else if (selection2 == 'c')
                 {
                     stockIndex += 9;
+                    int min = 9;
 
+                    if (min > count)
+                    {
+                        min = count;
+                    }
+                    
                     if (stockIndex >= count)
                     {
-                        stockIndex = count - 9;
+                        stockIndex = count - min;
                     }
                 }
                 else if (selection2 == 'a')
@@ -564,7 +573,7 @@ namespace tamodachi
 
                     if (sel > -1 && sel < 9)
                     {
-                        o = funO(sel, stockIndex);
+                        o = funO(sel + stockIndex);
 
                         return 1;
                     }
@@ -598,10 +607,10 @@ namespace tamodachi
                     {
                         Object food = null;
 
-                        int result = Menue
+                        int result = Menu
                             (
                                 (i, c) => $"\tPress {c} to buy {FoodNameToString(p.foods[i])} for {FoodNameToFood(p.foods[i]).price:C}",
-                                (i, j) => FoodNameToFood(p.foods[j + i]),
+                                i => FoodNameToFood(p.foods[i]),
                                 p.foods.Count(),
                                 ref food,
                                 "or 'a' to go back to today's items"
@@ -609,7 +618,7 @@ namespace tamodachi
 
                         if (result == 1)
                         {
-                            return (Food) food;
+                            return (Food)food;
                         }
                         else if (result == 2)
                         {
@@ -632,16 +641,17 @@ namespace tamodachi
             if (index > -1 && index < s.stock.Length)
             {
                 String message = "";
-                
+
                 Food food = s.Buy(ref p.money, index, ref message);
 
                 Console.WriteLine($"\t{message}");
 
                 return food;
-            }else
+            }
+            else
             {
                 Console.WriteLine("Incorrect selection");
-                
+
                 return null;
             }
         }
@@ -650,30 +660,37 @@ namespace tamodachi
         {
             string s = "";
             bool g = false;
-            
-            Program p = new Program(false, false, ref s, ref g);
 
-            Create(ref p, true);
+            Program p = new Program(false, true, ref s, ref g);
 
-            Console.WriteLine(p.tamodachis[0]);
-            Console.WriteLine(p.tamodachis[0].Say("Im kind of bored..."));
-            Console.WriteLine(p.tamodachis[0].Say("Lets invite someone new to the island!"));
+            Console.WriteLine(s);
 
-            Create(ref p, true);
+            Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
 
-            Console.WriteLine(p.tamodachis[1]);
-            Console.WriteLine(p.tamodachis[1].Say("Im so happy to be here!"));
-            Console.WriteLine(p.tamodachis[1].Say("What is your favourite object?"));
+            if (g)
+            {
+                Create(ref p, true);
 
-            string obj = Console.ReadLine();
+                Console.WriteLine(p.tamodachis[0]);
+                Console.WriteLine(p.tamodachis[0].Say("Im kind of bored..."));
+                Console.WriteLine(p.tamodachis[0].Say("Lets invite someone new to the island!"));
 
-            p.objects.Add(obj);
+                Create(ref p, true);
 
-            Console.WriteLine(p.tamodachis[0].Conversation(obj, p.tamodachis[1], 0));
+                Console.WriteLine(p.tamodachis[1]);
+                Console.WriteLine(p.tamodachis[1].Say("Im so happy to be here!"));
+                Console.WriteLine(p.tamodachis[1].Say("What is your favourite object?"));
 
-            p.money = 100;
+                string obj = Console.ReadLine();
 
-            Console.WriteLine(p.Money());
+                p.objects.Add(obj);
+
+                Console.WriteLine(p.tamodachis[0].Conversation(obj, p.tamodachis[1], 0));
+
+                p.money = 100;
+
+                Console.WriteLine(p.Money());
+            }
 
             return p;
         }
@@ -717,7 +734,19 @@ namespace tamodachi
 
             return new Program(false, false, ref m, ref g);
         }
-        
+
+        static string ViewInventory(Program p)
+        {
+            string s = "";
+
+            foreach (FoodItem f in p.inventory)
+            {
+                s += $"{FoodNameToString(f.food)}x{f.amount}";
+            }
+
+            return s;
+        }
+
         public static void Main(string[] args)
         {
             /*
@@ -776,6 +805,7 @@ namespace tamodachi
 
             //Console.WriteLine(p.Load());
 
+            /*
             Program p = Empty();
 
             for (int i = 0; i < 22; i++)
@@ -787,9 +817,9 @@ namespace tamodachi
             {
                 Object tamodachi = null;
 
-                int result = Menue(
+                int result = Menu(
                     (i, c) => $"press {c} to select {p.tamodachis[i].name}",
-                    (i, j) => p.tamodachis[j + i],
+                    i => p.tamodachis[i],
                     p.tamodachis.Count(),
                     ref tamodachi
                 );
@@ -807,6 +837,133 @@ namespace tamodachi
                 else if (result == 0)
                 {
                     Console.WriteLine("Incorrect selection!");
+                }
+            }
+            */
+
+            Program p = Startup();
+
+            while (true)
+            {
+                Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
+
+                Console.WriteLine
+                (
+                    "Press 1 to view tamodachis\n" +
+                    "press 2 to buy food\n" +
+                    "press s to save, press x to exit"
+                );
+
+                char input = Console.ReadLine()[0];
+
+                Console.WriteLine(input);
+
+                if (input == '2')
+                {
+                    if (p.todaysFoods == null)
+                    {
+                        Random random = new Random();
+                        int count = foodDict.Count;
+
+                        int r1 = random.Next(0, count / 3);
+                        int r2 = random.Next((count / 3) + 1, (count / 3) * 2);
+                        int r3 = random.Next(((count / 3) * 2) + 1, count);
+
+                        p.todaysFoods = new FoodNames[] { foods[r1].name, foods[r2].name, foods[r3].name };
+                    }
+
+                    Food[] f = { FoodNameToFood(p.todaysFoods[0]), FoodNameToFood(p.todaysFoods[1]), FoodNameToFood(p.todaysFoods[2]) };
+
+                    Food food = Buy(p, new Store(f));
+
+                    if (food != null)
+                    {
+                        p.StoreItem(food.name);
+                        p.foods.Add(food.name);
+                    }
+                }
+                else if (input == '1')
+                {
+                    Object tamodachi = null;
+
+                    while (true)
+                    {
+                        int result = Menu(
+                            (i, c) => $"press {c} to select {p.tamodachis[i].name}",
+                            i => p.tamodachis[i],
+                            p.tamodachis.Count(),
+                            ref tamodachi
+                        );
+
+                        if (result == 2)
+                        {
+                            break;
+                        }
+                        else if (result == 1)
+                        {
+                            Console.WriteLine((Tamodachi)tamodachi);
+
+                            break;
+                        }
+                        else if (result == 0)
+                        {
+                            Console.WriteLine("Incorrect selection!");
+                        }
+                    }
+
+                    if (tamodachi != null)
+                    {
+                        Tamodachi tamodachiT = (Tamodachi)tamodachi;
+
+                        Console.WriteLine($"Press 'a' to give {tamodachiT.name} some food");
+
+                        if (Console.ReadLine() == "a")
+                        {
+                            Object food = null;
+
+                            while (true)
+                            {
+                                int result = Menu(
+                                    (i, c) => $"press {c} to give {tamodachiT.name} some {p.inventory[i].food} (you have {p.inventory[i].amount})",
+                                    i => p.inventory[i].food,
+                                    p.inventory.Count(),
+                                    ref food
+                                );
+
+                                if (result == 2)
+                                {
+                                    break;
+                                }
+                                else if (result == 1)
+                                {
+                                    FoodNames foodN = (FoodNames)food;
+
+                                    Console.WriteLine(tamodachiT.Eat(FoodNameToFood(foodN), 2));
+
+                                    p.UseItem(foodN);
+
+                                    break;
+                                }
+                                else if (result == 0)
+                                {
+                                    Console.WriteLine("Incorrect selection!");
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (input == 's')
+                {
+                    p.Save();
+                }
+                else if (input == 'x')
+                {
+                    Console.WriteLine("Are you sure you want to exit? unsaved progress will be lost? (press 'y' to confirm)");
+
+                    if (Console.ReadLine() == "y")
+                    {
+                        break;
+                    }
                 }
             }
         }

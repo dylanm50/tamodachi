@@ -268,6 +268,7 @@ namespace tamodachi
                    s += String.Format("\t\t\t{0,11}: {1}\n", "Gender"     , gender     );
                    s += String.Format("\t\t\t{0,11}:"      , "Fancies"                 );
 
+            
             // Adding each gender
             foreach (Gender g in fancies)
             {
