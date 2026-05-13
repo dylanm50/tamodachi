@@ -6,7 +6,7 @@ namespace tamodachi
 {
     public class phrase
     {
-        string message;
+        public string message { get; }
         public System.TimeOnly[] timing { get; }
 
         public phrase(string message, System.TimeOnly[] timing)

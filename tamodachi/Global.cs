@@ -86,6 +86,8 @@ namespace tamodachi
             { FoodNames.pancakes          , "pancakes"             }
         };
 
+        public static int XPinLevel = 1000;
+
         public static FoodNames StringToFoodName(string s)
         {
             FoodNames food = foodDict.FirstOrDefault(x => x.Value == s).Key;
@@ -226,85 +228,6 @@ namespace tamodachi
             }
 
             throw new Exception();
-        }
-
-        static void Testing()
-        {
-            Console.WriteLine("Running a C# tamodachi game container.");
-            Console.WriteLine("\tInstance 1:");
-
-            Console.WriteLine("\t\tLoading ...");
-
-            string m = "";
-            bool g = false;
-
-            Program p = new Program(true, false, ref m, ref g);
-
-            Tamodachi happy = p.tamodachis[0];
-            Tamodachi sad = p.tamodachis[1];
-            Tamodachi contempt = p.tamodachis[2];
-
-            Console.WriteLine("\t\tFinished loading!");
-
-            Console.WriteLine($"\t\tThe current time is {p.time}");
-
-            Console.WriteLine($"\t\t{happy}");
-            Console.WriteLine($"\t\t{sad}");
-            Console.WriteLine($"\t\t{contempt}");
-            Console.WriteLine($"\t\t{happy.MatchToString(sad)}");
-            Console.WriteLine($"\t\t{happy.Talk("ummm idk what to say XD", TimeOnly.FromTimeSpan(p.time.TimeOfDay))}");
-            Console.WriteLine($"\t\t{happy.Talk("imm be a STAR", TimeOnly.FromTimeSpan(p.time.TimeOfDay))}");
-
-            string o = p.objects[new Random().Next(p.objects.Count() - 1)];
-
-            Console.WriteLine(happy.Conversation(o, sad, 2));
-
-            Food pizza = foods[0];
-            Food sushi = foods[1];
-            Food burger = foods[2];
-
-            /*
-            Console.WriteLine($"{happy.Eat(pizza, 2)}");
-            Console.WriteLine($"{happy.Eat(pizza, 2)}");
-            Console.WriteLine($"{happy.Eat(sushi, 2)}");
-            Console.WriteLine($"{happy.Eat(burger, 2)}");
-
-            Console.WriteLine($"{sad.Eat(pizza, 2)}");
-            Console.WriteLine($"{sad.Eat(sushi, 2)}");
-            Console.WriteLine($"{sad.Eat(sushi, 2)}");
-            Console.WriteLine($"{sad.Eat(burger, 2)}");
-
-            Console.WriteLine($"{contempt.Eat(pizza, 2)}");
-            Console.WriteLine($"{contempt.Eat(sushi, 2)}");
-            Console.WriteLine($"{contempt.Eat(burger, 2)}");
-            Console.WriteLine($"{contempt.Eat(burger, 2)}");
-            */
-
-            Store s = new Store(new Food[] { pizza, sushi, burger });
-
-            p.money = 100;
-
-            string empty = "";
-
-            happy.Eat(pizza, 0);
-            p.foods = new List<FoodNames> { FoodNames.mcChicken, FoodNames.burger };
-
-            p.Save();
-
-            /*
-            int l = 100000;
-
-            Console.WriteLine($"Initalising {l} programs");
-
-            Program[] programs = new Program[l];
-
-            for (int i = 0; i < l; i ++)
-            {
-                programs[i] = new Program();
-            }
-
-            Console.WriteLine("Finished!");
-            */
         }
 
         public static string FoodNameToString(FoodNames f)
@@ -704,38 +627,6 @@ namespace tamodachi
             return p;
         }
 
-        static void Shopping(ref Program p)
-        {
-            Console.WriteLine(p.tamodachis[0].Say("Lets go to the store!"));
-
-            Store s = new Store(new Food[] { foods[0], foods[1], foods[3] });
-
-            Food food = null;
-
-            while (food == null)
-            {
-                food = Buy(p, s);
-            }
-
-            while (true)
-            {
-                Console.WriteLine("Choose someone to give the food to!");
-
-                Console.WriteLine($"Press 1 for {p.tamodachis[0].name}, Press 2 for {p.tamodachis[1].name}");
-
-                int i = CharToNum(Console.ReadLine()[0]) - 1;
-
-                if (i > -1 && i < 2)
-                {
-                    Console.WriteLine(p.tamodachis[i].Eat(food, 0));
-
-                    break;
-                }
-
-                Console.WriteLine("Incorrect selection!");
-            }
-        }
-
         static Program Empty()
         {
             string m = "";
@@ -756,103 +647,11 @@ namespace tamodachi
             return s;
         }
 
-        public static void Main(string[] args)
+        public static void MainLoop()
         {
-            /*
-            string message = "";
-            bool check = false;
-
-            Program p = new Program(false, false, ref message, ref check);
-            p.money = 100;
-            p.foods = new List<FoodNames>
-            {
-                FoodNames.pizza,
-                FoodNames.sushi,
-                FoodNames.burger,
-                FoodNames.mcChicken,
-                FoodNames.ramen,
-                FoodNames.porridge,
-                FoodNames.KFCvalueMeal,
-                FoodNames.bobba,
-                FoodNames.jerky,
-                FoodNames.TVdinner,
-                FoodNames.skittles,
-                FoodNames.cake,
-                FoodNames.peanuts,
-                FoodNames.cola,
-                FoodNames.watermellon,
-                FoodNames.carbonara,
-                FoodNames.assassinsSpaghetti,
-                FoodNames.pancakes
-            };
-            
-
-            Food[] stock = { foods[0], foods[1], foods[2] };
-
-            Console.WriteLine(Buy(p, new Store(stock)));
-            */
-
-            //Program p = Startup();
-
-            /*
-            string m = "";
-            bool g = false;
-
-            Program p = new Program(false, false, ref m, ref g);
-
-            p.tamodachis = new List<Tamodachi> {new Tamodachi("test", 1, 1, 1, 1, 1, Egender.male, new Egender[] {})};
-            p.objects = new List<string> {"test object"};
-            p.foods = new List<FoodNames> {FoodNames.pizza};
-
-            p.Save();
-            p.Load();
-
-            Console.WriteLine(p);
-            */
-
-            //p.Save();
-
-            //Console.WriteLine(p.Load());
-
-            /*
-            Program p = Empty();
-
-            for (int i = 0; i < 22; i++)
-            {
-                p.tamodachis.Add(new Tamodachi(i.ToString(), 1, 1, 1, 1, 1, Egender.male, new Egender[0]));
-            }
-
-            while (true)
-            {
-                Object tamodachi = null;
-
-                int result = Menu(
-                    (i, c) => $"press {c} to select {p.tamodachis[i].name}",
-                    i => p.tamodachis[i],
-                    p.tamodachis.Count(),
-                    ref tamodachi
-                );
-
-                if (result == 2)
-                {
-                    break;
-                }
-                else if (result == 1)
-                {
-                    Console.WriteLine((Tamodachi)tamodachi);
-
-                    break;
-                }
-                else if (result == 0)
-                {
-                    Console.WriteLine("Incorrect selection!");
-                }
-            }
-            */
-
             Program p = Startup();
 
-            Console.WriteLine(p);
+            //Console.WriteLine(p); you can uncomment this for debugging
 
             while (true)
             {
@@ -874,9 +673,9 @@ namespace tamodachi
                         Random random = new Random();
                         int count = foodDict.Count;
 
-                        int r1 = random.Next(0                    , count / 3      );
-                        int r2 = random.Next((count / 3)       + 1, (count / 3) * 2);
-                        int r3 = random.Next(((count / 3) * 2) + 1, count          );
+                        int r1 = random.Next(0, count / 3);
+                        int r2 = random.Next((count / 3) + 1, (count / 3) * 2);
+                        int r3 = random.Next(((count / 3) * 2) + 1, count);
 
                         p.todaysFoods = new FoodNames[] { foods[r1].name, foods[r2].name, foods[r3].name };
                     }
@@ -947,7 +746,7 @@ namespace tamodachi
                                 {
                                     FoodNames foodN = (FoodNames)food;
 
-                                    Console.WriteLine(tamodachiT.Eat(FoodNameToFood(foodN), 2));
+                                    tamodachiT.Eat(FoodNameToFood(foodN), 2, Console.WriteLine, Console.ReadLine);
 
                                     p.UseItem(foodN);
 
@@ -980,5 +779,29 @@ namespace tamodachi
                 }
             }
         }
+
+        public static void Main(string[] args)
+        {
+            //MainLoop();
+
+            Program p = Empty();
+
+            p.tamodachis.Add
+            (
+                new Tamodachi
+                (
+                    "gamer",
+                    1, 1, 1, 1, 1,
+                    Egender.male, new Egender[] { },
+                    new FoodRelationship[] { },
+                    100,
+                    new phrase[] { }
+                )
+            );
+
+            p.tamodachis[0].Eat(foods[0], 0, Console.WriteLine, Console.ReadLine);
+
+            Console.WriteLine(p);
+        }      
     }
 }

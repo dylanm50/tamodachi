@@ -124,6 +124,18 @@ namespace tamodachi
                         writer.WriteLine($"\t\t\t{Global.FoodNameToString(f.food.name)}");
                         writer.WriteLine($"\t\t\t\t{f.like}");
                     }
+
+                    writer.WriteLine($"\t\t{t.XP}");
+
+                    writer.WriteLine("\t\tphrases");
+
+                    foreach (phrase phrase in t.phrases)
+                    {
+                        writer.WriteLine($"\t\t\t{phrase.message}");
+
+                        writer.WriteLine($"\t\t\t\t{phrase.timing[0]}");
+                        writer.WriteLine($"\t\t\t\t{phrase.timing[1]}");
+                    }
                 }
 
                 writer.WriteLine("objects");
@@ -175,14 +187,7 @@ namespace tamodachi
         public bool Load()
         {
             try
-            {
-                //setting everthing to a blank slate 
-                tamodachis = new List<Tamodachi>();
-                objects = new List<string>();
-                foods = new List<FoodNames>();
-                inventory = new List<FoodItem>();
-                money = 0;
-                
+            {   
                 string[] lines = File.ReadAllLines("save.txt");
                 int i = 0;
 
@@ -250,8 +255,30 @@ namespace tamodachi
                                     break;
                                 }
                             }
-                            
+
                             i += 10 + j + k + h;
+
+                            int xp = int.Parse(lines[i].Trim());
+                            i+= 2;
+
+                            s = lines[i];
+
+                            List<phrase> phrases = new List<phrase>(); 
+
+                            while (s[2] == '\t')
+                            {
+                                string phraseText = lines[i];
+                                TimeOnly start = TimeOnly.Parse(lines[i + 1].Trim());
+                                TimeOnly end = TimeOnly.Parse(lines[i + 2].Trim());
+
+                                phrases.Add(new phrase(phraseText, new TimeOnly[] {start, end}));
+
+                                i += 3;
+
+                                s = lines[i];
+                            }
+
+                            phrase[] phrasesA = phrases.ToArray();
 
                             FoodRelationship[] foodRelationshipsArray = foodRelationships.ToArray();
 
@@ -259,7 +286,9 @@ namespace tamodachi
                                 (
                                     name, movement, speech, energy, thinking, normal,
                                     gender, fanciesArray,
-                                    foodRelationshipsArray
+                                    foodRelationshipsArray,
+                                    xp,
+                                    phrasesA
                                 )
                             );
                         }
@@ -384,6 +413,12 @@ namespace tamodachi
                     { 
                         new FoodRelationship(Global.FoodNames.pizza, 10),
                         new FoodRelationship(Global.FoodNames.sushi, 5)
+                    },
+                    750,
+                    new phrase[] 
+                    {
+                        new phrase("hello", new TimeOnly[] {new TimeOnly(0, 0), new TimeOnly(23, 59)}),
+                        new phrase("i love turtles", new TimeOnly[] {new TimeOnly(0, 0), new TimeOnly(23, 59)}),
                     }
                 ));
 
@@ -441,7 +476,18 @@ namespace tamodachi
                 {
                     if (lastTime.Date != time.Date)
                     {
-                        todaysFoods = new FoodNames[3];
+                        todaysFoods = null;
+
+                        int totalXP = 0;
+
+                        foreach (Tamodachi t in tamodachis)
+                        {
+                            totalXP += t.XP;
+                        }
+
+                        int totalLevels = totalXP / Global.XPinLevel;
+
+                        money += Math.Log(totalLevels) * 87; //https://www.desmos.com/calculator/pwaysjki6p
                     }
                     
                     message += "loaded save";
@@ -485,6 +531,18 @@ namespace tamodachi
                 {
                     s += $"\t\t\t\t{r.food}\n";
                     s += $"\t\t\t\t\t{r.like}\n";
+                }
+
+                s += $"\t\t\tXP:{t.XP}\n";
+
+                s += "\t\t\tphrases:\n";
+
+                foreach (phrase phrase in t.phrases)
+                {
+                    s += $"\t\t\t\t{phrase.message}\n";
+
+                    s += $"\t\t\t\t\tstart:{phrase.timing[0]}\n";
+                    s += $"\t\t\t\t\tend:{phrase.timing[1]}\n";
                 }
             }
 

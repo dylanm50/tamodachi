@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Reflection.Emit;
 using System.Text;
 using static tamodachi.Program;
@@ -21,7 +22,11 @@ namespace tamodachi
 
         public Personality Personality { get; }
 
-        public List<FoodRelationship> foods = new List<FoodRelationship>();
+        public List<FoodRelationship> foods { get; } = new List<FoodRelationship>();
+
+        public int XP;
+
+        public List<phrase> phrases { get; } = new List<phrase>();
 
         // This is who I am :)
         public Tamodachi
@@ -82,7 +87,9 @@ namespace tamodachi
             string name,
             int m, int s, int e, int t, int n,
             Global.Egender gender, Global.Egender[] fancies,
-            FoodRelationship[] foodrelationship
+            FoodRelationship[] foodrelationship,
+            int xp,
+            phrase[] phrases
         ): this
            (
             name,
@@ -91,6 +98,8 @@ namespace tamodachi
            )
         {   
             foods = foodrelationship.ToList();
+            XP = xp;
+            this.phrases = phrases.ToList();
         }
 
         // Can I fuck this person?
@@ -155,13 +164,15 @@ namespace tamodachi
         // Say something
         public string Talk(string backupMessage, System.TimeOnly time)
         {
-            phrase[] filteredPhrases = 
+            List<phrase> filteredPhrases =
                 Personality.phrases.FindAll
                 (
                     n => (n.timing[1] >= time) && (n.timing[0] <= time)
-                ).ToArray();
+                );
 
-            int length = filteredPhrases.Length;
+            phrase[] filteredPhrasesA = filteredPhrases.Concat(phrases).ToArray();
+
+            int length = filteredPhrasesA.Length;
 
             if (length == 0)
             {
@@ -170,7 +181,7 @@ namespace tamodachi
 
             int i = new Random().Next(length);
             
-            return Say(filteredPhrases[i].ToString());
+            return Say(filteredPhrasesA[i].ToString());
         }
 
 
@@ -199,7 +210,12 @@ namespace tamodachi
             return s;
         }
 
-        public string Eat(Food food, int level)
+        public int GetLevel()
+        {
+            return XP / 1000;
+        }
+
+        public void Eat(Food food, int level, Action<string> display, Func<string> input)
         {   
             FoodRelationship relationship = null;
 
@@ -229,25 +245,65 @@ namespace tamodachi
 
                 foods.Add(relationship);
             }
+
+            int levelBefore = GetLevel();
             
+            int gain = relationship.like * 100;
+            
+            XP += gain;
+
+            int levelAfter = GetLevel();    
 
             string start = $"{ind}{name} is eating {food}\n{ind}\t";
 
             if (relationship.like < 5)
             {
-                return $"{start}{name} didn't really like it";
+                display($"{start}{name} didn't really like it");
             }
             else if (relationship.like < 6)
             {
-                return $"{start}{name} thought it was alright";
+                display($"{start}{name} thought it was alright");
             }
             else if (relationship.like < 10)
             {
-                return $"{start}{name} really liked it";
+                display($"{start}{name} really liked it");
             }else
             {
-                return $"{start}{name} REALLY liked it!!!";
+                display($"{start}{name} REALLY liked it!!!");
             }
+
+            string levelS = "";
+            string levelUpS = "";
+            bool levelUp = false;
+
+            if (levelAfter == levelBefore)
+            {
+                levelS = $"\n{name} is level {levelAfter}";
+            }
+            else
+            {
+                display($"{ind}\t{name} is now level {levelAfter}!");
+
+                levelUp = true;
+            }
+
+            display($"{ind}\t{name} gained {gain} XP!{levelS}");
+
+            if(levelUp)
+            {
+                LevelUp(display, input);
+            }
+        }
+
+        void LevelUp(Action<string> display, Func<string> input)
+        {
+            display($"write a new phrase for {name}");
+
+            string phraseText = input();
+
+            phrase phrase = new phrase(phraseText, new System.TimeOnly[] { new System.TimeOnly(0, 0), new System.TimeOnly(23, 59) });
+
+            phrases.Add(phrase);
         }
 
         public string MatchToString(Tamodachi person)
