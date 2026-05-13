@@ -320,7 +320,7 @@ namespace tamodachi
                         string s = lines[i + 1];
                         int k = 0;
 
-                        todaysFoods = new FoodNames[3];
+                        todaysFoods = new FoodNames[] { };
 
                         while (true)
                         {
