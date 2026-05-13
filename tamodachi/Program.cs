@@ -147,8 +147,11 @@ namespace tamodachi
 
                 foreach (FoodItem i in inventory)
                 {
-                    writer.WriteLine($"\t{Global.FoodNameToString(i.food)}");
-                    writer.WriteLine($"\t\t{i.amount}");
+                    if (i.amount > 0)
+                    {
+                        writer.WriteLine($"\t{Global.FoodNameToString(i.food)}");
+                        writer.WriteLine($"\t\t{i.amount}");
+                    }
                 }
 
                 writer.WriteLine("todaysFoods");
@@ -193,21 +196,23 @@ namespace tamodachi
                     }
                     else if (lines[i] == "tamodachis")
                     {
-                        while(lines[i + 1][0] == '\t')
+                        i ++;
+                        
+                        while(lines[i][0] == '\t')
                         {
-                            string name = lines[i + 1].Trim();
+                            string name = lines[i].Trim();
 
-                            int movement = int.Parse(lines[i + 3].Trim());
-                            int speech   = int.Parse(lines[i + 4].Trim());
-                            int energy   = int.Parse(lines[i + 5].Trim());
-                            int thinking = int.Parse(lines[i + 6].Trim());
-                            int normal   = int.Parse(lines[i + 7].Trim());
+                            int movement = int.Parse(lines[i + 2].Trim());
+                            int speech   = int.Parse(lines[i + 3].Trim());
+                            int energy   = int.Parse(lines[i + 4].Trim());
+                            int thinking = int.Parse(lines[i + 5].Trim());
+                            int normal   = int.Parse(lines[i + 6].Trim());
 
-                            Egender gender = Global.StringToEgender(lines[i + 8].Trim());
+                            Egender gender = Global.StringToEgender(lines[i + 7].Trim());
 
                             List<Egender> fancies = new List<Egender>();
 
-                            string s = lines[i + 10];
+                            string s = lines[i + 9];
                             int j = 0;
 
                             while (s[2] == '\t')
@@ -216,29 +221,49 @@ namespace tamodachi
 
                                 j ++;
 
-                                s = lines[i + 10 + j];
+                                s = lines[i + 9 + j];
                             }
 
                             Egender[] fanciesArray = fancies.ToArray();
 
+                            int h = 0;
+
+                            if (fancies.Count() == 0)
+                            {
+                                h = -2;
+                            }
+
                             int k = 0;
-                            s = lines[i + 12 + j + k];
+                            s = lines[i + 10 + j];
 
                             List<FoodRelationship> foodRelationships = new List<FoodRelationship>();
 
-                            while (s[2] == '\t')
+                            while (s.Length >= 3 && s[2] == '\t')
                             {
                                 Global.FoodNames food = Global.StringToFoodName(s.Trim());
-                                int like = int.Parse(lines[i + 12 + j + k + 1]);
+
+                                int like = int.Parse(lines[i + 10 + j + k + 1]);
 
                                 foodRelationships.Add(new FoodRelationship(food, like));
 
                                 k += 2;
 
-                                s = lines[i + 12 + j + k];
+                                s = lines[i + 10 + j + k];
+
+                                if (s.Length < 3)
+                                {
+                                    k += 0;
+                                    
+                                    break;
+                                }
                             }
 
-                            i += 10 + j + k;
+                            if (foodRelationships.Count() == 0 && fancies.Count() == 0)
+                            {
+                                h += 2;
+                            }
+                            
+                            i += 10 + j + k + h;
 
                             FoodRelationship[] foodRelationshipsArray = foodRelationships.ToArray();
 
@@ -250,8 +275,6 @@ namespace tamodachi
                                 )
                             );
                         }
-
-                        i ++;
                     }
                     else if (lines[i] == "objects")
                     {
@@ -491,7 +514,7 @@ namespace tamodachi
                 s += $"\t\t{Global.FoodNameToString(f)}\n";
             }
 
-            s += "\tinventory:";
+            s += "\tinventory:\n";
 
             foreach (FoodItem i in inventory)
             {
@@ -499,11 +522,11 @@ namespace tamodachi
                 s += $"\t\t\t{i.amount}\n";
             }
 
-            s += "\ttodaysFoods";
+            s += "\ttodaysFoods:\n";
 
             foreach (Global.FoodNames f in todaysFoods)
             {
-                s += $"\t\t{Global.FoodNameToString(f)}";
+                s += $"\t\t{Global.FoodNameToString(f)}\n";
             }
 
             return s;

@@ -589,12 +589,19 @@ namespace tamodachi
 
         static Food Buy(Program p, Store s)
         {
+            bool check = false;
+            
             Console.WriteLine(s);
 
             char selection;
 
             while (true)
             {
+                if (check)
+                {
+                    Console.WriteLine($"You have {p.money:C}");
+                }
+
                 selection = ShowStock(p, s);
 
                 if (selection == 'q')
@@ -634,6 +641,8 @@ namespace tamodachi
                 {
                     break;
                 }
+
+                check = true;
             }
 
             int index = CharToNum(selection) - 1;
@@ -843,6 +852,8 @@ namespace tamodachi
 
             Program p = Startup();
 
+            Console.WriteLine(p);
+
             while (true)
             {
                 Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
@@ -856,8 +867,6 @@ namespace tamodachi
 
                 char input = Console.ReadLine()[0];
 
-                Console.WriteLine(input);
-
                 if (input == '2')
                 {
                     if (p.todaysFoods == null)
@@ -865,9 +874,9 @@ namespace tamodachi
                         Random random = new Random();
                         int count = foodDict.Count;
 
-                        int r1 = random.Next(0, count / 3);
-                        int r2 = random.Next((count / 3) + 1, (count / 3) * 2);
-                        int r3 = random.Next(((count / 3) * 2) + 1, count);
+                        int r1 = random.Next(0                    , count / 3      );
+                        int r2 = random.Next((count / 3)       + 1, (count / 3) * 2);
+                        int r3 = random.Next(((count / 3) * 2) + 1, count          );
 
                         p.todaysFoods = new FoodNames[] { foods[r1].name, foods[r2].name, foods[r3].name };
                     }
@@ -964,6 +973,10 @@ namespace tamodachi
                     {
                         break;
                     }
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect input!");
                 }
             }
         }
