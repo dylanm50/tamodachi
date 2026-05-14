@@ -19,14 +19,14 @@ namespace tamodachi
 
             if (person.Personality.name == food.personality)
             {
-                like = random.Next(5, 10);
+                like = random.Next(5, 11);
             }else if (person.Personality.name == Global.PersonalityNames.contempt)
             {
-                like = random.Next(5, 6);
+                like = random.Next(5, 7);
             }
             else
             {
-                like = random.Next(1, 5);
+                like = random.Next(1, 6);
             }
         }
 

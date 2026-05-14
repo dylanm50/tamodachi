@@ -597,10 +597,10 @@ namespace tamodachi
 
             Console.WriteLine(s);
 
-            Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
-
             if (g)
             {
+                Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
+
                 Create(ref p, true);
 
                 Console.WriteLine(p.tamodachis[0]);
@@ -654,21 +654,29 @@ namespace tamodachi
             //Console.WriteLine(p); you can uncomment this for debugging
 
             while (true)
-            {
+            {   
                 Console.WriteLine($"It is {TimeOnly.FromTimeSpan(p.time.TimeOfDay)}");
 
                 Console.WriteLine
                 (
                     "Press 1 to view tamodachis\n" +
                     "press 2 to buy food\n" +
+                    "press 3 to create a new tamodachi\n" +
                     "press s to save, press x to exit"
                 );
 
                 char input = Console.ReadLine()[0];
 
-                if (input == '2')
+                if (input == '3')
                 {
-                    if (p.todaysFoods == null)
+                    if(Create(ref p, false))
+                    {
+                        Console.WriteLine($"Successfully created {p.tamodachis[p.tamodachis.Count() - 1].name}!");
+                    }
+                }
+                else if (input == '2')
+                {
+                    if (p.todaysFoods == null)  
                     {
                         Random random = new Random();
                         int count = foodDict.Count;
@@ -778,30 +786,45 @@ namespace tamodachi
                     Console.WriteLine("Incorrect input!");
                 }
             }
+
+            Console.WriteLine(p); // you can also toggle this code for debugging
         }
 
         public static void Main(string[] args)
         {
-            //MainLoop();
+            MainLoop();
 
-            Program p = Empty();
+            /*
+            string s = "";
+            bool g = false;
 
-            p.tamodachis.Add
-            (
-                new Tamodachi
+            Program p = new Program(true, false, ref s, ref g);
+
+            Console.WriteLine(p.tamodachis.Count);
+
+            int i;
+
+            for (i = 0; i < 1000; i++)
+            {
+                p.tamodachis.Add
                 (
-                    "gamer",
-                    1, 1, 1, 1, 1,
-                    Egender.male, new Egender[] { },
-                    new FoodRelationship[] { },
-                    100,
-                    new phrase[] { }
-                )
-            );
+                    new Tamodachi
+                    (
+                        $"person {i}",
+                        1, 1, 1, 1, 1,
+                        Egender.male, new Egender[] { },
+                        new FoodRelationship[] { },
+                        1999,
+                        new phrase[] { }
+                    )
+                );
+            }
 
-            p.tamodachis[0].Eat(foods[0], 0, Console.WriteLine, Console.ReadLine);
+            p.Save();
+            p.Load();
 
-            Console.WriteLine(p);
+            Console.WriteLine(p.tamodachis.Count);
+            */
         }      
     }
 }

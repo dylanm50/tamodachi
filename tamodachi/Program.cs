@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Design;
+using System.Security.AccessControl;
 using static tamodachi.Global;
 
 namespace tamodachi
@@ -186,6 +187,17 @@ namespace tamodachi
 
         public bool Load()
         {
+            // store state as a backup
+            DateTime tempLastTime = lastTime;
+            Tamodachi[] tempTamodachis = tamodachis.ToArray();
+            string[] tempObjects = objects.ToArray();
+            double tempMoney = money;
+            FoodNames[] tempFoods = foods.ToArray();
+            FoodItem[] tempInventory = inventory.ToArray();
+            FoodNames[] tempTodaysFoods = todaysFoods;
+ 
+            ResetState();
+
             try
             {   
                 string[] lines = File.ReadAllLines("save.txt");
@@ -340,8 +352,6 @@ namespace tamodachi
                             Global.FoodNames food = Global.StringToFoodName(s.Trim());
                             int amount = int.Parse(lines[i + 2 + k].Trim());
 
-                            Console.WriteLine(amount);
-
                             inventory.Add(new FoodItem(food, amount));
 
                             k += 2;
@@ -355,7 +365,7 @@ namespace tamodachi
                     {
                         // There might be no values so we have to check for this
                         if (lines.Length - 1 < i + 1)
-                        {
+                        {   
                             return true;
                         }
                         
@@ -372,7 +382,7 @@ namespace tamodachi
                             k ++;
 
                             if (i + 1 + k > lines.Length - 1)
-                            {
+                            {   
                                 return true;
                             }
 
@@ -381,7 +391,7 @@ namespace tamodachi
                     }
                     else
                     {
-                        ResetState();
+                        SetState(tempLastTime, tempTamodachis, tempObjects, tempMoney, tempFoods, tempInventory, tempTodaysFoods);
                         
                         return false;
                     }
@@ -389,16 +399,44 @@ namespace tamodachi
             }
             catch
             {
-                ResetState();
-                
+                SetState(tempLastTime, tempTamodachis, tempObjects, tempMoney, tempFoods, tempInventory, tempTodaysFoods);
+
                 return false;
             }
+        }
+
+        private void SetState
+        (
+            DateTime lastTime,
+            Tamodachi[] tamodachis,
+            string[] objects,
+            double money,
+            FoodNames[] foods,
+            FoodItem[] inventory,
+            FoodNames[] todaysFoods
+        )
+        {
+            this.lastTime = lastTime;
+
+            this.tamodachis = tamodachis.ToList();
+
+            this.objects = objects.ToList();
+
+            this.money = money;
+
+            this.foods = foods.ToList();
+
+            this.inventory = inventory.ToList();
+
+            this.todaysFoods = todaysFoods;
         }
 
         public Program(bool testing, bool load, ref string message, ref bool newGame)
         {
             if (testing)
-            {   
+            {
+                ResetState();
+                
                 tamodachis.Add(
                 new Tamodachi
                 (
