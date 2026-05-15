@@ -669,14 +669,14 @@ namespace tamodachi
 
                 if (input == '3')
                 {
-                    if(Create(ref p, false))
+                    if (Create(ref p, false))
                     {
                         Console.WriteLine($"Successfully created {p.tamodachis[p.tamodachis.Count() - 1].name}!");
                     }
                 }
                 else if (input == '2')
                 {
-                    if (p.todaysFoods == null)  
+                    if (p.todaysFoods == null)
                     {
                         Random random = new Random();
                         int count = foodDict.Count;
@@ -772,6 +772,10 @@ namespace tamodachi
                 {
                     p.Save();
                 }
+                else if (input == 'd')
+                {
+                    Console.WriteLine(p); // debugging
+                }
                 else if (input == 'x')
                 {
                     Console.WriteLine("Are you sure you want to exit? unsaved progress will be lost? (press 'y' to confirm)");
@@ -786,8 +790,6 @@ namespace tamodachi
                     Console.WriteLine("Incorrect input!");
                 }
             }
-
-            Console.WriteLine(p); // you can also toggle this code for debugging
         }
 
         public static void Main(string[] args)
@@ -804,7 +806,7 @@ namespace tamodachi
 
             int i;
 
-            for (i = 0; i < 1000; i++)
+            for (i = 0; i < 10000; i++) // a value of 1,000,000 will give a 1gb save file!
             {
                 p.tamodachis.Add
                 (
