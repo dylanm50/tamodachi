@@ -682,8 +682,8 @@ namespace tamodachi
                         int count = foodDict.Count;
 
                         int r1 = random.Next(0, count / 3);
-                        int r2 = random.Next((count / 3) + 1, (count / 3) * 2);
-                        int r3 = random.Next(((count / 3) * 2) + 1, count);
+                        int r2 = random.Next((count / 3), (count / 3) * 2);
+                        int r3 = random.Next(((count / 3) * 2), count);
 
                         p.todaysFoods = new FoodNames[] { foods[r1].name, foods[r2].name, foods[r3].name };
                     }
@@ -695,7 +695,11 @@ namespace tamodachi
                     if (food != null)
                     {
                         p.StoreItem(food.name);
-                        p.foods.Add(food.name);
+
+                        if (foods.FirstOrDefault(f => f.name == food.name) == null)
+                        {
+                            p.foods.Add(food.name);
+                        } 
                     }
                 }
                 else if (input == '1')
