@@ -828,9 +828,9 @@ namespace tamodachi
                     Console.WriteLine("Incorrect input!");
                 }
 
-                int rng = r.Next(3);
+                int rng = r.Next(2);
 
-                if (rng == 1)
+                if (rng == 0)
                 {
                     // Conversation
                     int n = 2;
@@ -842,7 +842,7 @@ namespace tamodachi
 
                     Console.WriteLine(t1.Conversation(o, t2, 0));
                 }
-                else if (rng == 2)
+                else if (rng == 1)
                 {
                     // Asks a question about an object
                     Tamodachi person = p.tamodachis[r.Next(p.tamodachis.Count())];
