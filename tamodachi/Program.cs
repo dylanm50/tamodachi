@@ -23,6 +23,8 @@ namespace tamodachi
 
         public FoodNames[] todaysFoods = null;
 
+        string fileName;
+
          void ResetState()
          {
             lastTime = new DateTime(1999, 1, 1);
@@ -431,8 +433,10 @@ namespace tamodachi
             this.todaysFoods = todaysFoods;
         }
 
-        public Program(bool testing, bool load, ref string message, ref bool newGame)
+        public Program(bool testing, bool load, ref string message, ref bool newGame, string fileName = "save.txt")
         {
+            this.fileName = fileName;
+
             if (testing)
             {
                 ResetState();

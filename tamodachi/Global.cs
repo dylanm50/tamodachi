@@ -319,25 +319,33 @@ namespace tamodachi
 
                 List<Egender> likes = new List<Egender>();
 
-                Console.WriteLine($"Type \"y\" if {name} likes men.");
+                Console.WriteLine($"Type \"y\" if {name} is a child (children cannot date)");
 
-                if (Console.ReadLine() == "y")
+                string response = Console.ReadLine();
+                bool child = response.Length > 0 && response[0] == 'y';
+
+                if (!child)
                 {
-                    likes.Add(Egender.male);
-                }
+                    Console.WriteLine($"Type \"y\" if {name} likes men.");
 
-                Console.WriteLine($"Type \"y\" if {name} likes women.");
+                    if (Console.ReadLine() == "y")
+                    {
+                        likes.Add(Egender.male);
+                    }
 
-                if (Console.ReadLine() == "y")
-                {
-                    likes.Add(Egender.female);
-                }
+                    Console.WriteLine($"Type \"y\" if {name} likes women.");
 
-                Console.WriteLine($"Type \"y\" if {name} likes non binaries.");
+                    if (Console.ReadLine() == "y")
+                    {
+                        likes.Add(Egender.female);
+                    }
 
-                if (Console.ReadLine() == "y")
-                {
-                    likes.Add(Egender.nonBinary);
+                    Console.WriteLine($"Type \"y\" if {name} likes non binaries.");
+
+                    if (Console.ReadLine() == "y")
+                    {
+                        likes.Add(Egender.nonBinary);
+                    }
                 }
 
                 Console.WriteLine($"Attempting to create {name}!");
@@ -635,23 +643,43 @@ namespace tamodachi
             return new Program(false, false, ref m, ref g);
         }
 
-        static string ViewInventory(Program p)
+        public static int[] Random(int l, int n)
         {
-            string s = "";
-
-            foreach (FoodItem f in p.inventory)
+            if (n > l)
             {
-                s += $"{FoodNameToString(f.food)}x{f.amount}";
+                throw new ArgumentException(n.ToString());
+            }
+            
+            if (n <= 0)
+            {
+                throw new ArgumentException(n.ToString());
             }
 
-            return s;
+            if (l <= 0)
+            {
+                throw new ArgumentException(l.ToString());
+            }
+            
+            int min = 0;
+            int[] a = new int[n];
+            int sect = l / n;
+            Random rand = new Random();
+
+            for (int i = 0; i < n; i ++)
+            {
+                int max = sect * (i + 1);
+                a[i] = rand.Next(min, max);
+                min = max;
+            }
+
+            return a;
         }
 
         public static void MainLoop()
         {
+            // From these 2 vars you can deduce the entire state of the program
             Program p = Startup();
-
-            //Console.WriteLine(p); you can uncomment this for debugging
+            Random r = new Random();
 
             while (true)
             {   
@@ -665,7 +693,13 @@ namespace tamodachi
                     "press s to save, press x to exit"
                 );
 
-                char input = Console.ReadLine()[0];
+                string inputString = Console.ReadLine();
+                char input = '?'; //place holder value
+
+                if (inputString.Length > 0)
+                {
+                    input = inputString[0];
+                }
 
                 if (input == '3')
                 {
@@ -678,14 +712,14 @@ namespace tamodachi
                 {
                     if (p.todaysFoods == null)
                     {
-                        Random random = new Random();
-                        int count = foodDict.Count;
+                        int n = 3;
+                        int[] a = Random(foodDict.Count, n);
+                        p.todaysFoods = new FoodNames[n];
 
-                        int r1 = random.Next(0, count / 3);
-                        int r2 = random.Next((count / 3), (count / 3) * 2);
-                        int r3 = random.Next(((count / 3) * 2), count);
-
-                        p.todaysFoods = new FoodNames[] { foods[r1].name, foods[r2].name, foods[r3].name };
+                        for (int i = 0; i < n; i ++)
+                        {
+                            p.todaysFoods[i] = foods[a[i]].name;
+                        }
                     }
 
                     Food[] f = { FoodNameToFood(p.todaysFoods[0]), FoodNameToFood(p.todaysFoods[1]), FoodNameToFood(p.todaysFoods[2]) };
@@ -792,6 +826,35 @@ namespace tamodachi
                 else
                 {
                     Console.WriteLine("Incorrect input!");
+                }
+
+                int rng = r.Next(3);
+
+                if (rng == 1)
+                {
+                    // Conversation
+                    int n = 2;
+                    int[] a = Random(p.tamodachis.Count, n);
+
+                    Tamodachi t1 = p.tamodachis[a[0]];
+                    Tamodachi t2 = p.tamodachis[a[1]];
+                    string o = p.objects[r.Next(p.objects.Count())];
+
+                    Console.WriteLine(t1.Conversation(o, t2, 0));
+                }
+                else if (rng == 2)
+                {
+                    // Asks a question about an object
+                    Tamodachi person = p.tamodachis[r.Next(p.tamodachis.Count())];
+
+                    Console.WriteLine(person.Say("Hey I have to ask a question!"));
+                    Console.WriteLine(person.Say("Whats an object that your really fond of?"));
+
+                    string o = Console.ReadLine();
+
+                    Console.WriteLine(person.Say($"Ah a {o}, I could really do with one of those!"));
+
+                    p.objects.Add(o);
                 }
             }
         }
