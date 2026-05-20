@@ -64,6 +64,7 @@ namespace tamodachi
             pancakes
         };
 
+        // Dictionary used for converting foodnames to strings
         static Dictionary<FoodNames, string> foodDict = new Dictionary<FoodNames, string>
         {
             { FoodNames.pizza             , "pizza"                },
@@ -88,6 +89,12 @@ namespace tamodachi
 
         public static int XPinLevel = 1000;
 
+        /// <summary>
+        /// Converts foodname to string
+        /// </summary>
+        /// <param name="s">String to convert</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown if string can't be converted</exception>
         public static FoodNames StringToFoodName(string s)
         {
             FoodNames food = foodDict.FirstOrDefault(x => x.Value == s).Key;
@@ -195,6 +202,7 @@ namespace tamodachi
         };
 
         // don't add prices that are more granular than one cent
+        // List of foods
         public static Food[] foods =
         {
             new Food( FoodNames.pizza              , 05.77 , PersonalityNames.happy    ),
@@ -217,6 +225,12 @@ namespace tamodachi
             new Food( FoodNames.pancakes           , 09.00 , PersonalityNames.happy    )
         };
 
+        /// <summary>
+        /// Converts foodName to food
+        /// </summary>
+        /// <param name="name">foodName to be converted</param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Thrown if food can't be found</exception>
         public static Food FoodNameToFood(FoodNames name)
         {
             foreach (Food f in foods)
@@ -230,6 +244,12 @@ namespace tamodachi
             throw new Exception();
         }
 
+        /// <summary>
+        /// Converts foodNames to String USE THIS FUNCTION INSTEAD OF ENUMS DEFAULT TO STRING
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static string FoodNameToString(FoodNames f)
         {
             string s = foodDict[f];
@@ -241,6 +261,8 @@ namespace tamodachi
 
             return s;
         }
+
+        // These are 2 hacky solutions I came up with to get integers out of user input, normally you would use Int.Parse() but this is slightly faster
 
         static int CharToNum(char c)
         {
@@ -261,13 +283,18 @@ namespace tamodachi
             return 0;
         }
 
+        /// <summary>
+        /// Creates a tamodachi
+        /// </summary>
+        /// <param name="p">The program where the tamodachi will be stored</param>
+        /// <param name="manditory">Flag where function will be exited if false</param>
+        /// <returns>True if tamodachi is created</returns>
         static bool Create(ref Program p, bool manditory)
         {
             string name;
 
             while (true)
             {
-
                 Console.WriteLine("Creating a Guy!");
 
                 string acceptableValues = "(non 0 values within the range of -4-4 are accepted)";
@@ -372,6 +399,13 @@ namespace tamodachi
                 }
             }
         }
+
+        /// <summary>
+        /// Indents string
+        /// </summary>
+        /// <param name="n">Number of indents</param>
+        /// <returns>Outputed string</returns>
+        /// <exception cref="ArgumentException">If <param name="n"> < 0</exception>
         public static string indent(int n)
         {
             if (n < 0)
@@ -389,6 +423,13 @@ namespace tamodachi
             return s;
         }
 
+        /// <summary>
+        /// Buys an item
+        /// </summary>
+        /// <param name="wallet">Wallet to buy item with</param>
+        /// <param name="food">Food to buy</param>
+        /// <param name="message">Outputed message</param>
+        /// <returns></returns>
         public static Food BuyItem(ref double wallet, Food food, ref string message)
         {
             double newWallet = wallet - food.price;
@@ -407,6 +448,12 @@ namespace tamodachi
             return null;
         }
 
+        /// <summary>
+        /// Shows stock in the store
+        /// </summary>
+        /// <param name="p">The program to get the money from</param>
+        /// <param name="s">The store where the stock comes from</param>
+        /// <returns>Users selection</returns>
         static char ShowStock(Program p, Store s)
         {
             Console.WriteLine($"\tYou have {p.Money()}");
@@ -430,6 +477,15 @@ namespace tamodachi
             return Console.ReadLine()[0];
         }
 
+        /// <summary>
+        /// General purpose function that will let the user choose from an arbitrary amount of <c>{Object}s<c>"
+        /// </summary>
+        /// <param name="funS">String that displays for each object</param>
+        /// <param name="funO">Function to get the object</param>
+        /// <param name="count">Number of objects to pull from</param>
+        /// <param name="o">Outputed object</param>
+        /// <param name="s">Optional string that displays if user is able to fall back to another menue</param>
+        /// <returns>-1 if user gives incorrect input, 0 if user falls back, 1 if object is outputed, 2 if user quits</returns>
         static int Menu(Func<int, int, string> funS, Func<int, object> funO, int count, ref object o, string s = "")
         {
             int stockIndex = 0;
@@ -518,6 +574,12 @@ namespace tamodachi
             }
         }
 
+        /// <summary>
+        /// Prompts the user to but an item from the store
+        /// </summary>
+        /// <param name="p">The chosen program</param>
+        /// <param name="s">The chosen store</param>
+        /// <returns>The food bought</returns>
         static Food Buy(Program p, Store s)
         {
             bool check = false;
@@ -596,6 +658,10 @@ namespace tamodachi
             }
         }
 
+        /// <summary>
+        /// Starts the game, does initalisation if no save data is found
+        /// </summary>
+        /// <returns></returns>
         static Program Startup()
         {
             string s = "";
@@ -635,14 +701,15 @@ namespace tamodachi
             return p;
         }
 
-        static Program Empty()
-        {
-            string m = "";
-            bool g = false;
-
-            return new Program(false, false, ref m, ref g);
-        }
-
+        /// <summary>
+        /// Generates <param name="n"> sudo random numbers within a range of <param name="l"></param>
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="n"></param>
+        /// <returns>An array of size <param name="n"> containing the sudo random numbers</returns>
+        /// <exception cref="ArgumentException">
+        /// Throws an exception if <param name="n"> > <param name="l"> or <param name="n"> <= 0 or <param name="l"> <= 0
+        /// </exception>
         public static int[] Random(int l, int n)
         {
             if (n > l)
@@ -675,6 +742,9 @@ namespace tamodachi
             return a;
         }
 
+        /// <summary>
+        /// Main loop of the program, edit this if you want new things to happen
+        /// </summary>
         public static void MainLoop()
         {
             // From these 2 vars you can deduce the entire state of the program
@@ -862,38 +932,6 @@ namespace tamodachi
         public static void Main(string[] args)
         {
             MainLoop();
-
-            /*
-            string s = "";
-            bool g = false;
-
-            Program p = new Program(true, false, ref s, ref g);
-
-            Console.WriteLine(p.tamodachis.Count);
-
-            int i;
-
-            for (i = 0; i < 10000; i++) // a value of 1,000,000 will give a 1gb save file!
-            {
-                p.tamodachis.Add
-                (
-                    new Tamodachi
-                    (
-                        $"person {i}",
-                        1, 1, 1, 1, 1,
-                        Egender.male, new Egender[] { },
-                        new FoodRelationship[] { },
-                        1999,
-                        new phrase[] { }
-                    )
-                );
-            }
-
-            p.Save();
-            p.Load();
-
-            Console.WriteLine(p.tamodachis.Count);
-            */
         }      
     }
 }

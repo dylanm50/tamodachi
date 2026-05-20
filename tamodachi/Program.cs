@@ -25,6 +25,9 @@ namespace tamodachi
 
         string fileName;
 
+        /// <summary>
+        /// Resets state to inital values
+        /// </summary>
          void ResetState()
          {
             lastTime = new DateTime(1999, 1, 1);
@@ -42,16 +45,20 @@ namespace tamodachi
             todaysFoods = null;
         }
 
-        public static string mTime(System.TimeOnly time)
-        {
-            return time.ToString("HH:mm");
-        }
-
+        /// <summary>
+        /// Displays current balance
+        /// </summary>
+        /// <returns></returns>
         public string Money()
         {
             return $"You have {money:C}";
         }
 
+        /// <summary>
+        /// Uses up a food item
+        /// </summary>
+        /// <param name="food">The food to be used up</param>
+        /// <exception cref="ArgumentException">Thrown if no food can be found</exception>
         public void UseItem(FoodNames food)
         {
             for (int i = 0; i < inventory.Count(); i ++)
@@ -67,6 +74,10 @@ namespace tamodachi
             throw new ArgumentException(food.ToString());
         }
 
+        /// <summary>
+        /// Stores an item of food
+        /// </summary>
+        /// <param name="food">The food item to be added</param>
         public void StoreItem(FoodNames food)
         {
             for (int i = 0; i < inventory.Count(); i++)
@@ -82,6 +93,10 @@ namespace tamodachi
             inventory.Add(new FoodItem(food));
         }
 
+        /// <summary>
+        /// Saves state of game to a text file
+        /// </summary>
+        /// <exception cref="Exception">Thrown when saving is unsuccessful</exception>
         public void Save()
         {
             Console.WriteLine("Saving progress, don't close the program or turn off the system!");
@@ -93,7 +108,7 @@ namespace tamodachi
 
             try
             {
-                using var writer = new StreamWriter("save.txt");
+                using var writer = new StreamWriter(fileName);
 
                 writer.WriteLine(time);
 
@@ -187,6 +202,10 @@ namespace tamodachi
             }
         }
 
+        /// <summary>
+        /// Loads the game from a text file
+        /// </summary>
+        /// <returns>True if loading is successful</returns>
         public bool Load()
         {
             // store state as a backup
@@ -202,7 +221,7 @@ namespace tamodachi
 
             try
             {   
-                string[] lines = File.ReadAllLines("save.txt");
+                string[] lines = File.ReadAllLines(fileName);
                 int i = 0;
 
                 while(true)
@@ -407,6 +426,16 @@ namespace tamodachi
             }
         }
 
+        /// <summary>
+        /// Sets state of the game
+        /// </summary>
+        /// <param name="lastTime"></param>
+        /// <param name="tamodachis"></param>
+        /// <param name="objects"></param>
+        /// <param name="money"></param>
+        /// <param name="foods"></param>
+        /// <param name="inventory"></param>
+        /// <param name="todaysFoods"></param>
         private void SetState
         (
             DateTime lastTime,

@@ -102,7 +102,11 @@ namespace tamodachi
             this.phrases = phrases.ToList();
         }
 
-        // Can I fuck this person?
+        /// <summary>
+        /// Checks if tamodachi is the same gender as person
+        /// </summary>
+        /// <param name="person">the person who will be liked</param>
+        /// <returns></returns>
         private bool MatchG(Tamodachi person)
         {
             foreach (Gender gender in fancies)
@@ -124,7 +128,11 @@ namespace tamodachi
             return false;
         }
 
-        // Do I like this person?
+        /// <summary>
+        /// Checks if tamadochai and person will get along
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
         public bool Like(Tamodachi person)
         {
             return 
@@ -135,7 +143,11 @@ namespace tamodachi
                 );
         }
 
-        // Should I fuck this person?
+        /// <summary>
+        /// Checks if tamodachi and person can be in a romantic relationship
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
         public bool Match(Tamodachi person)
         {
             if (MatchG(person))
@@ -155,13 +167,22 @@ namespace tamodachi
             return false;
         }
         
-        // Say the thing
+        /// <summary>
+        /// Tamodachi will say a message
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns></returns>
         public string Say(string message)
         {
             return $"{this.name}: \"{message}\"";
         }
 
-        // Say something
+        /// <summary>
+        /// Tamodachi will say a phrase
+        /// </summary>
+        /// <param name="backupMessage">Backup message if no phrases can be said</param>
+        /// <param name="time">Current time</param>
+        /// <returns></returns>
         public string Talk(string backupMessage, System.TimeOnly time)
         {
             List<phrase> filteredPhrases =
@@ -185,7 +206,14 @@ namespace tamodachi
         }
 
 
-        // Have a chat (eww it looks like javascript)
+        /// <summary>
+        /// Two tamodachis will have a conversation about an object
+        /// </summary>
+        /// <param name="o">The object</param>
+        /// <param name="person">The other person</param>
+        /// <param name="level">The indentation level</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public string Conversation(string o, Tamodachi person, int level)
         {
             if(level <0)
@@ -210,11 +238,22 @@ namespace tamodachi
             return s;
         }
 
+        /// <summary>
+        /// Gets the current level of the tamodachi
+        /// </summary>
+        /// <returns></returns>
         public int GetLevel()
         {
-            return XP / 1000;
+            return XP / Global.XPinLevel;
         }
 
+        /// <summary>
+        /// Tamodachi will eat a food
+        /// </summary>
+        /// <param name="food">The food</param>
+        /// <param name="level">Indentation level</param>
+        /// <param name="display">Function to display the output</param>
+        /// <param name="input">Function to get user input in the case of a level up</param>
         public void Eat(Food food, int level, Action<string> display, Func<string> input)
         {   
             FoodRelationship relationship = null;
@@ -295,6 +334,11 @@ namespace tamodachi
             }
         }
 
+        /// <summary>
+        /// Function to get a new phrase for leveling up
+        /// </summary>
+        /// <param name="display">Function to display messages</param>
+        /// <param name="input">Function to get input</param>
         void LevelUp(Action<string> display, Func<string> input)
         {
             display($"write a new phrase for {name}");
@@ -306,6 +350,11 @@ namespace tamodachi
             phrases.Add(phrase);
         }
 
+        /// <summary>
+        /// Displays if two tamodachis would date
+        /// </summary>
+        /// <param name="person"></param>
+        /// <returns></returns>
         public string MatchToString(Tamodachi person)
         {
             if (Match(person))

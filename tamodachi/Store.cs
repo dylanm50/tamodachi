@@ -18,7 +18,14 @@ namespace tamodachi
                 throw new ArgumentException(stock.Length.ToString());
             }
         }
-
+        
+        /// <summary>
+        /// Buys an item
+        /// </summary>
+        /// <param name="wallet"></param>
+        /// <param name="food"></param>
+        /// <param name="message">message that will be displayed</param>
+        /// <returns></returns>
         public Food Buy(ref double wallet, int food, ref string message)
         {
             Food item = stock[food];
