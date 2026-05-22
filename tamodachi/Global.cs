@@ -484,7 +484,7 @@ namespace tamodachi
         /// <param name="funO">Function to get the object</param>
         /// <param name="count">Number of objects to pull from</param>
         /// <param name="o">Outputed object</param>
-        /// <param name="s">Optional string that displays if user is able to fall back to another menue</param>
+        /// <param name="s">Optional string that displays if user is able to fall back to another menu</param>
         /// <returns>-1 if user gives incorrect input, 0 if user falls back, 1 if object is outputed, 2 if user quits</returns>
         static int Menu(Func<int, int, string> funS, Func<int, object> funO, int count, ref object o, string s = "")
         {

@@ -150,21 +150,7 @@ namespace tamodachi
         /// <returns></returns>
         public bool Match(Tamodachi person)
         {
-            if (MatchG(person))
-            {
-                Global.PersonalityNames contempt = Global.PersonalityNames.contempt;
-                Global.PersonalityNames a = Personality.name;
-                Global.PersonalityNames b = person.Personality.name;
-
-                if (a == contempt || b == contempt)
-                {
-                    return true;
-                }
-
-                return a == b;
-            }
-
-            return false;
+            return MatchG(person) && Like(person);
         }
         
         /// <summary>
