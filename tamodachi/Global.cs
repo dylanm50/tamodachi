@@ -799,11 +799,22 @@ namespace tamodachi
                     if (food != null)
                     {
                         p.StoreItem(food.name);
+                        bool add = true;
+                        
+                        foreach(FoodNames foodName in p.foods)
+                        {
+                            if (foodName == food.name)
+                            {
+                                add = false;
 
-                        if (foods.FirstOrDefault(f => f.name == food.name) == null)
+                                break;
+                            }
+                        }
+
+                        if (add)
                         {
                             p.foods.Add(food.name);
-                        } 
+                        }
                     }
                 }
                 else if (input == '1')
